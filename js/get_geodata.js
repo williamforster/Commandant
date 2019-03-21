@@ -2,6 +2,7 @@ import {  Vector as VectorLayer } from 'ol/layer.js';
 import {  Vector as VectorSource } from 'ol/source.js';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
 import GeoJSON from 'ol/format/GeoJSON.js';
+var constants = require('./constants.js');
 
 /**
  * An example of a geoJSON trip returned from the ajax query:
@@ -24,7 +25,10 @@ import GeoJSON from 'ol/format/GeoJSON.js';
           "geometry":{
               "type":"Point",
               "coordinates":[ 153.0116342, -27.4981089],
-              "time":"2019-03-20T06:06:06.121Z"
+          },
+          "properties":{
+              "type":"Point",
+              "time":"2019-03-20 06:06:06"
           }
       }
    ]
@@ -45,8 +49,8 @@ module.exports = function addPoints(map) {
             var geojsonObject = JSON.parse(this.responseText);
             var vectorSource = new VectorSource({
                 features: (new GeoJSON({
-                    'dataProjection': 'EPSG:4326',
-                    'featureProjection': 'EPSG:4326'}))
+                    'dataProjection': constants.COORDINATE_REFERENCE_SYSTEM,
+                    'featureProjection': constants.COORDINATE_REFERENCE_SYSTEM}))
                     .readFeatures(geojsonObject)
             });
             
@@ -57,13 +61,13 @@ module.exports = function addPoints(map) {
                       color: 'rgba(255, 255, 255, 0.2)'
                     }),
                     stroke: new Stroke({
-                      color: '#0000ff',
+                      color: '#3333ff',
                       width: 4
                     }),
                     image: new CircleStyle({
-                      radius: 7,
+                      radius: 6,
                       fill: new Fill({
-                        color: '#ffcc33'
+                        color: '#0000ff'
                       })
                     })
                 })

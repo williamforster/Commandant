@@ -36,8 +36,11 @@
             'geometry' => (object)array(
                 'type' => 'Point',
                 'coordinates' => array($row['longtitude'], $row['latitude'])
-            )
-            
+            ),
+            'properties' => (object) array(
+                'type' => 'Point',
+                'time' => $row['time']
+            ),
         ));
     }
     echo json_encode($geojson);

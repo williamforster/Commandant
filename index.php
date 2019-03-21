@@ -10,6 +10,10 @@
   <body>
     <p> <?php echo "hello world" ?>
     <div id="map" class="map"></div>
+    <div id="map-datapoint-popup">
+      <a href="#" id="map-datapoint-popup-closer"></a>
+      <div id="map-datapoint-popup-content"></div>
+    </div>
     <script src="./bundle.js"></script>
   </body>
 </html>

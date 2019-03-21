@@ -4,6 +4,7 @@
   "description": "Viewing geojson data on a map",
   "main": "main.js",
   "scripts": {
+    "dev": "browserify -g [ babelify --presets [ \"@babel/preset-env\" ] ] --entry main.js > bundle.js",
     "build": "browserify -g [ babelify --presets [ \"@babel/preset-env\" ] ] -g uglifyify --entry main.js > bundle.js"
   },
   "dependencies": {
