@@ -54,7 +54,7 @@ var map = new Map({
   target: 'map',
   view: new View({
     projection: constants.COORDINATE_REFERENCE_SYSTEM,
-    center: [153.01151, -27.49753],
+    center: constants.MAP_START_LOCATION,
     zoom: 17
   }),
 });
