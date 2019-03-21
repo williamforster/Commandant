@@ -1,3 +1,7 @@
+Commandant displays time-based geoJSON on a map
+
+![Screenshot of application](screenshot.png?raw=true "Screenshot")
+
 # Usage
 
 Download xampp or a similar software and find the website directory (htdocs)
