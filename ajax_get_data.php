@@ -1,10 +1,11 @@
 <?php
     include 'db_connect.php';
+    $DB_TABLE_NAME = 'glutton_reading';
     
     // Get the data from the database
     // $stmt = $db->prepare("SELECT * FROM glutton_reading WHERE id=? AND name=?");
     // $stmt->execute(array($id, $name));
-    $stmt = $pdo->prepare("SELECT * FROM glutton_reading");
+    $stmt = $pdo->prepare('SELECT * FROM ' . $DB_TABLE_NAME);
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $geojson = (object) array(

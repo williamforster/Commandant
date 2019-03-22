@@ -4,7 +4,6 @@ import { Draw, Modify, Snap } from 'ol/interaction.js';
 import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer.js';
 import { OSM, Vector as VectorSource } from 'ol/source.js';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
-import { toLonLat, fromLonLat } from 'ol/proj.js';
 import Overlay from 'ol/Overlay.js';
 var addPoints = require('./js/get_geodata.js');
 var displayFeatureInfo = require('./js/display_info.js')
@@ -90,6 +89,7 @@ addInteractions();*/
 //   alert(evt.coordinate);
 // });
 
+// Check if mouse is over a dot and show/hide popup depending
 map.on('pointermove', function(evt) {
   if (evt.dragging) {
     return;
@@ -101,6 +101,7 @@ map.on('pointermove', function(evt) {
     evt);
 });
 
+// Run an ajax query to get the data points and add them to the map
 $(document).ready(function() {
   addPoints(map);
 })

@@ -4,35 +4,37 @@ import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
 import GeoJSON from 'ol/format/GeoJSON.js';
 var constants = require('./constants.js');
 
+const LOCATION_DATA_URL = 'ajax_get_data.php';
+
 /**
- * An example of a geoJSON trip returned from the ajax query:
+ * An example of geoJSON returned from the ajax query. Note the custom properties like 'time'
  * {
-   "type":"FeatureCollection",
-   "features":[
-      {
-         "type":"Feature",
-         "geometry":{
-            "type":"LineString",
-            "coordinates":[
-               [153.0116342,-27.4981089],
-               [153.0115188,-27.4979116],
-               [153.0114000,-27.4977321]
-            ]
-         }
-      },
-      {
-          "type":"Feature",
-          "geometry":{
-              "type":"Point",
-              "coordinates":[ 153.0116342, -27.4981089],
-          },
-          "properties":{
-              "type":"Point",
-              "time":"2019-03-20 06:06:06"
-          }
-      }
-   ]
-}
+ *  "type":"FeatureCollection",
+ *  "features":[
+ *     {
+ *        "type":"Feature",
+ *        "geometry":{
+ *           "type":"LineString",
+ *           "coordinates":[
+ *              [153.0116342,-27.4981089],
+ *              [153.0115188,-27.4979116],
+ *              [153.0114000,-27.4977321]
+ *           ]
+ *        }
+ *     },
+ *     {
+ *         "type":"Feature",
+ *         "geometry":{
+ *             "type":"Point",
+ *             "coordinates":[ 153.0116342, -27.4981089],
+ *         },
+ *         "properties":{
+ *             "type":"Point",
+ *             "time":"2019-03-20 06:06:06"
+ *         }
+ *     }
+ *  ]
+ *}
  */
 
 /**
@@ -61,7 +63,7 @@ module.exports = function addPoints(map) {
                       color: 'rgba(255, 255, 255, 0.2)'
                     }),
                     stroke: new Stroke({
-                      color: '#3333ff',
+                      color: '#aaaa22',
                       width: 4
                     }),
                     image: new CircleStyle({
@@ -74,9 +76,9 @@ module.exports = function addPoints(map) {
             });
             map.addLayer(vectorLayer);
         } else {
-            console.log("AJAX request failed");
+            console.log("AJAX request returned code " + this.status);
         }
     };
-    xmlhttp.open("GET", "ajax_get_data.php", true);
+    xmlhttp.open("GET", LOCATION_DATA_URL, true);
     xmlhttp.send();
 }
