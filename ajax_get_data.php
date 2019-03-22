@@ -8,7 +8,12 @@
     $stmt = $pdo->prepare('SELECT * FROM ' . $DB_TABLE_NAME);
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $geojson = (object) array(
+    
+    foreach ($rows as &$row) {
+        echo implode(',', $row) . "\n";
+    }
+    
+    /*$geojson = (object) array(
         'type' => 'FeatureCollection',
         'features' => array()
     );
@@ -44,7 +49,7 @@
             ),
         ));
     }
-    echo json_encode($geojson);
+    echo json_encode($geojson); */
 
     $pdo = null; // disconnect
 ?>
