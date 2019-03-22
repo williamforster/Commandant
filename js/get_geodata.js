@@ -123,13 +123,13 @@ function addColumnsToData(rows) {
 function getGeoJSONPoint(row) {
     if (row && isArray(row) && row.length > NEXT_COORDS)  {
         return {
-            type:'Feature',
+            type: 'Feature',
             geometry: {
-                type:'Point',
+                type: 'Point',
                 coordinates: [row[LONGTITUDE_COL], row[LATITUDE_COL]]
             },
-            properties: {
-                type:'Point',
+            "properties": {
+                type: 'Point',
                 euid: row[EUID_COL],
                 time: row[DATETIME_COL],
                 fill: row[FILL_COL],

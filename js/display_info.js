@@ -17,7 +17,9 @@ module.exports = function displayFeatureInfo(map, overlay, documentElement, even
 
     if (feature && feature.getProperties()['type'] && feature.getProperties()['type']=='Point') {
         overlay.setPosition(feature.getGeometry()['flatCoordinates']);
-        documentElement.innerHTML = feature.getProperties()['time'];
+        var d = new Date(feature.getProperties()['time']);
+        documentElement.innerHTML = d.getHours() + ':' + d.getMinutes() + ':' +
+                d.getSeconds() + '<br>' + d.toDateString();
     } else {
         overlay.setPosition(undefined);
     }
