@@ -9,12 +9,13 @@ var constants = require('./constants.js');
 // Where to look for geo data
 const LOCATION_DATA_URL = 'ajax_get_data.php';
 // What columns will be returned, in csv format, eg.
-// 00:80:00:00:de:ad:be:ef,2019-03-30 06:06:06,153.1111,-27.49555,0.1
+// 00:80:00:00:de:ad:be:ef,2019-03-30 06:06:06,153.1111,-27.49555,0.1,-50
 const EUID_COL = 0;
 const DATETIME_COL = 1;
 const LONGTITUDE_COL = 2;
 const LATITUDE_COL = 3;
 const FILL_COL = 4;
+const SIGNAL_COL = 5;
 // columns that will be added after
 // How much bin is filled in that particular area. Density = (this fill - last fill)/distance
 const DEBRIS_DENSITY_COL = 6;
