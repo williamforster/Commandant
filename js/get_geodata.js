@@ -5,6 +5,7 @@ import GeoJSON from 'ol/format/GeoJSON.js';
 import { isArray } from 'util';
 import { stringify } from 'querystring';
 var constants = require('./constants.js');
+var colorConvert = require('color-convert');
 
 // Where to look for geo data
 const LOCATION_DATA_URL = 'ajax_get_data.php';
@@ -27,26 +28,6 @@ const NEXT_COORDS = 8;
 const NUM_DOT_COLORS = 10;
 
 /**
- * An example of geoJSON returned from the ajax query. Note the custom properties like 'time'
- * {
- *  "type":"FeatureCollection",
- *  "features":[
- *     {
- *        "type":"Feature",
- *        "geometry":{
- *           "type":"LineString",
- *           "coordinates":[
- *              [153.0116342,-27.4981089],
- *              [153.0115188,-27.4979116],
- *              [153.0114000,-27.4977321]
- *           ]
- *        }
- *     }
- *  ]
- *}
- */
-
-/**
  * Do an ajax request for some data. Convert to geojson and add that geoJSON to the given map.
  * Parameters:
  * map: the openlayers map to add a layer to
@@ -63,7 +44,8 @@ module.exports = function addPoints(map) {
             for (var rownum in rows) {
                 rows[rownum] = rows[rownum].split(',');
                 // convert all numbers to numbers
-                rows[rownum][DATETIME_COL] = Date(rows[rownum][DATETIME_COL]);
+                rows[rownum][DATETIME_COL] = 
+                        new Date(rows[rownum][DATETIME_COL].replace(" ", "T") + "Z");
                 rows[rownum][LONGTITUDE_COL] = parseFloat(rows[rownum][LONGTITUDE_COL]);
                 rows[rownum][LATITUDE_COL] = parseFloat(rows[rownum][LATITUDE_COL]);
                 rows[rownum][FILL_COL] = parseFloat(rows[rownum][FILL_COL]);
@@ -77,9 +59,9 @@ module.exports = function addPoints(map) {
             // Add debris density, prev coord, next coord and others
             addColumnsToData(rows);
 
-            var buckets = sortDataIntoBuckets(rows, DEBRIS_DENSITY_COL, NUM_DOT_COLORS);
-
-            addBucketsToMap(map, buckets);
+            //var buckets = sortDataIntoBuckets(rows, DEBRIS_DENSITY_COL, NUM_DOT_COLORS);
+            var days = sortDataIntoDays(rows);
+            addBucketsToMap(map, days);
         } else {
             console.log("AJAX request returned code " + this.status);
         }
@@ -171,10 +153,10 @@ function getGeoJSONMultiLineString(rows) {
 }
 
 /**
- * Return items from 'rows' sorted into groups
+ * Return items from param rows but sorted into strata
  * @param {2d array} rows : data from sql database
- * @param {int} sortColumn : column to 
- * @param {*} numBuckets : number of distinct groups to sort rows into
+ * @param {int} sortColumn : column of data to sort with
+ * @param {int} numBuckets : number of distinct groups to sort rows into
  */
 function sortDataIntoBuckets(rows, sortColumn, numBuckets) {
     // Now sort by debris density and divide into 'buckets'
@@ -185,16 +167,56 @@ function sortDataIntoBuckets(rows, sortColumn, numBuckets) {
     var minDensity = rows[0][sortColumn];
     var maxDensity = rows[rows.length - 1][sortColumn];
     var stepSize = (maxDensity - minDensity) / numBuckets;
+
+    // Put the data into buckets
     for (var row of rows) {
         if (row.length <= sortColumn) {
             console.log('error parsing geodata: ' + row);
             return;
         }
-        var bucketNum = Math.floor((row[sortColumn] - minDensity) / stepSize);
-        bucketNum = Math.min(buckets.length - 1, bucketNum); // Don't let index be undefined
-        buckets[bucketNum].push(row);
+        var bucketIndex = Math.floor((row[sortColumn] - minDensity) / stepSize);
+        // Don't let bucketIndex be undefined or outside array bounds
+        bucketIndex = Math.min(buckets.length - 1, bucketIndex);
+        if (bucketIndex == undefined || isNaN(bucketIndex)) { bucketIndex = 0; }
+        buckets[bucketIndex].push(row);
     }
     return buckets;
+}
+
+/**
+ * Return an array where each element is a day's worth of data (a 2d array).
+ * Also distinguish between dot euis
+ * @param {2d array} rows : All the data
+ */
+function sortDataIntoDays(rows) {
+    // Sort by euid then by date
+    rows.sort(function(a, b) { 
+        if (a[EUID_COL] === b[EUID_COL]) { return a[DATETIME_COL] > b[DATETIME_COL]; }
+        return a[EUID_COL] > b[EUID_COL];
+    });
+    if (rows.length > 0) {
+        var ret = [];
+        var lastDate = rows[0][DATETIME_COL];
+        var lastEuid = rows[0][EUID_COL];
+        var day = []; // Array of this day's rows
+        for (var row of rows) {
+            var currentDate = row[DATETIME_COL];
+            if (row[EUID_COL] === lastEuid &&
+                    currentDate.getFullYear() == lastDate.getFullYear() &&
+                    currentDate.getMonth() == lastDate.getMonth() &&
+                    currentDate.getDate() == lastDate.getDate()) {
+                day.push(row);
+            } else {
+                ret.push(day);
+                day = [row];
+            }
+            lastDate = currentDate;
+            lastEuid = row[EUID_COL];
+        }
+        ret.push(day);
+        return ret;
+    }
+    return [rows];
 }
 
 /**
@@ -203,7 +225,7 @@ function sortDataIntoBuckets(rows, sortColumn, numBuckets) {
  * @param {array} buckets : Array of arrays of row. Row is an array like [euid, time, lon ...]
  */
 function addBucketsToMap(map, buckets) {
-    var colorStep = 255 / buckets.length; // Divide colors into equidistant shades
+    var colorStep = 360 / buckets.length; // Divide colors into equidistant shades
     // Add lines to map
     for (var i = 0; i < buckets.length; ++i) {
         if (buckets[i].length === 0) { continue; }
@@ -213,8 +235,9 @@ function addBucketsToMap(map, buckets) {
             features: []
         }
         geojsonObject['features'].push(getGeoJSONMultiLineString(buckets[i]));
-        var c = Math.floor(i * colorStep);
-        addGeojsonToMap(map, geojsonObject, 'rgba(' + c + ',16,16,0.9)');
+        var c = colorConvert.hsv.rgb(i * colorStep, 200, 180);
+        addGeojsonToMap(map, geojsonObject, 'rgba(' + c[0] + ',' + c[1] + 
+                ',' + c[2] + ',0.9)');
     }
 
     // Add dots to map
@@ -230,8 +253,9 @@ function addBucketsToMap(map, buckets) {
             // Add features to it
             geojsonObject['features'].push(getGeoJSONPoint(item));
         }
-        var c = Math.floor(i * colorStep);
-        addGeojsonToMap(map, geojsonObject, 'rgba(' + c + ',16,16,0.9)');
+        var c = colorConvert.hsv.rgb(i * colorStep, 200, 180);
+        addGeojsonToMap(map, geojsonObject, 'rgba(' + c[0] + ',' + c[1] + 
+        ',' + c[2] + ',0.9)');
     }
 }
 

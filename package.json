@@ -1,10 +1,10 @@
 {
-  "name": "Commandant",
+  "name": "VehicleTracker",
   "version": "1.0.0",
   "description": "Viewing geojson data on a map",
   "main": "main.js",
   "scripts": {
-    "dev": "browserify -g [ babelify --presets [ \"@babel/preset-env\" ] ] --entry main.js > bundle.js",
+    "dev": "browserify -g [ babelify --presets [ \"@babel/preset-env\" ] ] main.js > bundle.js",
     "build": "browserify -g [ babelify --presets [ \"@babel/preset-env\" ] ] -g uglifyify --entry main.js > bundle.js"
   },
   "dependencies": {
@@ -15,6 +15,7 @@
     "@babel/preset-env": "^7.0.0-beta.56",
     "babelify": "^9.0.0",
     "browserify": "^16.2.3",
+    "color-tf": "^5.1.2",
     "uglifyify": "^5.0.1",
     "qunit": "^2.9.2"
   }
