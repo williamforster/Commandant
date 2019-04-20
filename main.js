@@ -5,9 +5,11 @@ import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer.js';
 import { OSM, Vector as VectorSource } from 'ol/source.js';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
 import Overlay from 'ol/Overlay.js';
-var addPoints = require('./js/get_geodata.js');
-var displayFeatureInfo = require('./js/display_info.js')
+var getPoints = require('./js/get_geodata.js');
 var constants = require('./js/constants.js');
+var getGeodata = require('./js/get_geodata.js');
+var processData = require('./js/process_data.js');
+var ui = require('./js/ui.js');
 
 // Use the OpenStreetMap database
 var raster = new TileLayer({
@@ -19,10 +21,7 @@ var raster = new TileLayer({
  */
 var mapDatapointPopupOverlay = new Overlay({
   element: document.getElementById('map-datapoint-popup'),
-  autoPan: true,
-  autoPanAnimation: {
-    duration: 250
-  }
+  autoPan: false
 });
 
 /*// Make a new layer for drawings of stuff
@@ -51,6 +50,7 @@ var map = new Map({
   layers: [raster], //, vector],
   overlays: [mapDatapointPopupOverlay],
   target: 'map',
+  renderer: 'webgl',
   view: new View({
     projection: constants.COORDINATE_REFERENCE_SYSTEM,
     center: constants.MAP_START_LOCATION,
@@ -94,7 +94,7 @@ map.on('pointermove', function(evt) {
   if (evt.dragging) {
     return;
   }
-  displayFeatureInfo(
+  ui.displayFeatureInfo(
     map, 
     mapDatapointPopupOverlay,
     document.getElementById('map-datapoint-popup-content'),
@@ -103,5 +103,11 @@ map.on('pointermove', function(evt) {
 
 // Run an ajax query to get the data points and add them to the map
 $(document).ready(function() {
-  addPoints(map);
+  getPoints().then(function(rows) {
+    rows = processData.addColumnsToData(rows);
+    console.log(rows);
+    ui.panToExtentOfData(map, rows);
+    var days = processData.sortDataIntoDays(rows);
+    var geojsons = processData.addBucketsToMap(map, days);
+  });
 })
