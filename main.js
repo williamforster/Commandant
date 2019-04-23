@@ -1,6 +1,8 @@
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
 import { Draw, Modify, Snap } from 'ol/interaction.js';
+import {click, pointerMove} from 'ol/events/condition.js';
+import Select from 'ol/interaction/Select.js'
 import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer.js';
 import { OSM, Vector as VectorSource } from 'ol/source.js';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
@@ -24,27 +26,6 @@ var mapDatapointPopupOverlay = new Overlay({
   autoPan: false
 });
 
-/*// Make a new layer for drawings of stuff
-var source = new VectorSource();
-var vector = new VectorLayer({
-  source: source,
-  style: new Style({
-    fill: new Fill({
-      color: 'rgba(255, 255, 255, 0.2)'
-    }),
-    stroke: new Stroke({
-      color: '#0000ff',
-      width: 4
-    }),
-    image: new CircleStyle({
-      radius: 5,
-      fill: new Fill({
-        color: '#ffcc33'
-      })
-    })
-  })
-});*/
-
 // Create a map portal in the #map div
 var map = new Map({
   layers: [raster], //, vector],
@@ -58,36 +39,14 @@ var map = new Map({
   }),
 });
 
-//var modify = new Modify({ source: source });
-//map.addInteraction(modify);
-
-//var draw, snap; // global so we can remove them later
-//var typeSelect = document.getElementById('type');
-
-/*function addInteractions() {
-  draw = new Draw({
-    source: source,
-    type: typeSelect.value
-  });
-  map.addInteraction(draw);
-  snap = new Snap({ source: source });
-  map.addInteraction(snap);
-}*/
-
-/**
- * Handle change event.
- */
-/*typeSelect.onchange = function () {
-  map.removeInteraction(draw);
-  map.removeInteraction(snap);
-  addInteractions();
-};
-
-addInteractions();*/
-
 // map.on('singleclick', function(evt) {
 //   alert(evt.coordinate);
 // });
+
+var clickSelect = new Select({condition: click});
+var hoverSelect = new Select({condition: pointerMove});
+map.addInteraction(clickSelect);
+map.addInteraction(hoverSelect);
 
 // Check if mouse is over a dot and show/hide popup depending
 map.on('pointermove', function(evt) {
@@ -98,6 +57,7 @@ map.on('pointermove', function(evt) {
     map, 
     mapDatapointPopupOverlay,
     document.getElementById('map-datapoint-popup-content'),
+    clickSelect.getFeatures(),
     evt);
 });
 

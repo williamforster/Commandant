@@ -15,7 +15,7 @@
     border: 1px solid #cccccc;
     bottom: 12px;
     left: -50px;
-    min-width: 70px;
+    min-width: 120px;
 }
 #map-datapoint-popup:after, #map-datapoint-popup:before {
     top: 100%;
