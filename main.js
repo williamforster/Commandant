@@ -44,7 +44,11 @@ var map = new Map({
 // });
 
 var clickSelect = new Select({condition: click});
-var hoverSelect = new Select({condition: pointerMove});
+var hoverSelect = new Select({
+  condition: pointerMove,
+  // selectable is not an official property so may not be in all layers
+  layers: function(layer) {return layer.getProperties()['selectable'] != false}
+});
 map.addInteraction(clickSelect);
 map.addInteraction(hoverSelect);
 
@@ -53,7 +57,7 @@ map.on('pointermove', function(evt) {
   if (evt.dragging) {
     return;
   }
-  ui.displayFeatureInfo(
+  ui.updateUi(
     map, 
     mapDatapointPopupOverlay,
     document.getElementById('map-datapoint-popup-content'),

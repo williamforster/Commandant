@@ -123,7 +123,7 @@ exports.addBucketsToMap = function(map, buckets) {
             type:'FeatureCollection',
             features: []
         }
-        geojsonObject['features'].push(getGeoJSONMultiLineString(buckets[i]));
+        geojsonObject['features'].push(getGeoJSONLineString(buckets[i]));
         var c = colorConvert.hsv.rgb((i * HUE_STEP) % MAX_HUE, LINE_SATURATION, LINE_VALUE);
         addGeojsonToMap(map, geojsonObject, 'rgba(' + c[0] + ',' + c[1] + 
                 ',' + c[2] + ',' + ALPHA + ')');
@@ -220,20 +220,17 @@ function getGeoJSONPoint(row) {
  * Return a geojson feature from several rows of data
  * @param {array} rows : array of data rows like [euid, time, lon ...]
  */
-function getGeoJSONMultiLineString(rows) {
+function getGeoJSONLineString(rows) {
     if (rows && isArray(rows) && rows.length > 0 && rows[0].length > constants.NEXT_COORDS)  {
         var ret = {
             type: 'Feature',
             geometry: {
-                type: 'MultiLineString',
+                type: 'LineString',
                 coordinates: []
             }
         }
         for (var row of rows) {
-            ret['geometry']['coordinates'].push([
-                row[constants.PREVIOUS_COORDS], 
-                [row[constants.LONGTITUDE_COL], row[constants.LATITUDE_COL]]
-            ]);
+            ret['geometry']['coordinates'].push(row[constants.PREVIOUS_COORDS]);
         }
         return ret;
     } else {

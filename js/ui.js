@@ -1,9 +1,17 @@
+import Feature from 'ol/Feature.js'
+import Map from 'ol/Map.js'
 import GeoJSON from 'ol/format/GeoJSON.js';
+import LineString from 'ol/geom/LineString.js';
 import Select from 'ol/interaction/Select.js';
 import VectorLayer from 'ol/layer/Vector.js';
+import { Layer } from 'ol/layer';
+import { Style, Stroke } from 'ol/style';
+import VectorSource from 'ol/source/Vector';
 var constants = require('./constants.js');
 var processData = require('./process_data.js');
 
+// The name that identifies the vector layer showing a path between 2 selected points
+const PATH_LAYER_NAME = 'showPathLayer';
 const PADDING = 0.2; // Reduce zoom when panning to data
 const MILLISECONDS_PER_MINUTE = 60000;
 const dayString = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -27,11 +35,13 @@ exports.panToExtentOfData = function(map, rows) {
  * selected: ol/Collection of selected features
  * event: The pointer move event
  */
-exports.displayFeatureInfo = function(map, overlay, documentElement, selected, event) {
+exports.updateUi = function(map, overlay, documentElement, selected, event) {
     var pixel = map.getEventPixel(event.originalEvent);
     var feature = map.forEachFeatureAtPixel(pixel, function(feature) {
         return feature;
     });
+
+    updateShownPathLayer(map, feature, selected.item(0));
 
     if (feature && feature.getProperties()['type'] && feature.getProperties()['type']=='Point') {
         overlay.setPosition(feature.getGeometry()['flatCoordinates']);
@@ -43,7 +53,7 @@ exports.displayFeatureInfo = function(map, overlay, documentElement, selected, e
                 selected.item(0).getProperties()['time'] !== 'undefined' &&
                 inSameLayer(map, selected.item(0), feature)) {
             var old = selected.item(0).getProperties()['time'];
-            var minutesDifference = Math.round(0.5 + (d - old) / MILLISECONDS_PER_MINUTE);
+            var minutesDifference = Math.round(0.5 + Math.abs((d - old) / MILLISECONDS_PER_MINUTE));
             timeString = minutesDifference.toString() + " min<br>" + timeString;
         }
         documentElement.innerHTML = timeString+ '<br>' + dayString[d.getDay()] + " " +
@@ -91,4 +101,112 @@ function inSameLayer(map, feature1, feature2) {
         }
     }
     return false;
+}
+
+/**
+ * Update the vector layer showing the path between two points that are on the same journey
+ * @param {Map} map 
+ * @param {Feature} feature1 the first selected feature
+ * @param {Feature} feature2 the hovered over feature
+ */
+function updateShownPathLayer(map, feature1, feature2) {
+    if (feature1 === updateShownPathLayer.feat1 && feature2 === updateShownPathLayer.feat2) {
+        return;
+    }
+
+    var shownPathLayer = map.getLayers().get(PATH_LAYER_NAME);
+    if (shownPathLayer === undefined) {
+        shownPathLayer = initializeShowPathLayer(map);
+    }
+
+    var vecSource = shownPathLayer.getSource();
+    vecSource.clear();
+    if (feature1 != undefined && feature2 != undefined && inSameLayer(map, feature1, feature2)) {
+        var journeySource = getVectorSourceOfFeature(map, feature1);
+        if (journeySource != undefined) {
+            var lineString = getPathBetweenPoints(journeySource.getFeatures(), feature1, feature2);
+            if (lineString != undefined) { vecSource.addFeature(lineString); }
+        }
+    }
+
+    updateShownPathLayer.feat1 = feature1; // Save the features so we only update when necessary
+    updateShownPathLayer.feat2 = feature2;
+}
+
+/**
+ * Add a new vector layer to map (for showing path between selected points)
+ * and return that layer.
+ * @param {Map} map 
+ */
+function initializeShowPathLayer(map) {
+    var shownPathLayer = new VectorLayer({
+        style: new Style({
+            stroke: new Stroke({
+                color: 'rgba(255,255,0,1.0)',
+                width: 4
+            })
+        }),
+        source: new VectorSource({
+            features: []
+        }),
+        updateWhileAnimating: true,
+        updateWhileInteracting: true,
+        selectable: false
+    });
+    map.addLayer(shownPathLayer);
+    map.getLayers().set(PATH_LAYER_NAME, shownPathLayer);
+    return shownPathLayer;
+}
+
+/**
+ * Given a journey and 2 features, get only the path between the features.
+ * @param {array(Feature)} features array of features with time property
+ * @param {ol/Feature} feature1 a feature, could be before, after or equal to feature2
+ * @param {ol/Feature} feature2 another feature
+ * @return {Feature} a linestring feature
+ */
+function getPathBetweenPoints(features, feature1, feature2) {
+    if (feature1 === feature2) { return; }
+
+    // Get just the features between 1 and 2 in order
+    var includedCoords = [];
+    features.sort(function(a, b) { return a.getProperties()['time'] < b.getProperties()['time']});
+    var found = false;
+    for (var f of features) {
+        if (!found) {
+            if (f === feature1 || f === feature2) { 
+                found = true;
+                var coords = f.getGeometry().getCoordinates();
+                if (coords === undefined) { 
+                    console.log("Non-point feature trying to show path through points");
+                }
+                includedCoords.push(coords);
+            }
+        } else {
+            var coords = f.getGeometry().getCoordinates();
+            if (coords === undefined) { 
+                console.log("Non-point feature trying to show path through points");
+            }
+            includedCoords.push(coords);
+            if (f === feature1 || f === feature2) { break; }
+        }
+    }
+
+    return new Feature({
+        geometry: new LineString(includedCoords),
+    });
+}
+
+/**
+ * @return The VectorSource that contains feature in param (or 'undefined')
+ * @param {Map} map The map object
+ * @param {Feature} feature A feature
+ */
+function getVectorSourceOfFeature(map, feature) {
+    for (var layer of map.getLayers().getArray()) {
+        if (layer.getSource().getFeatures && layer.getSource().getFeatures().includes(feature)) {
+            return layer.getSource();
+        }
+    }
+    return undefined;
 }

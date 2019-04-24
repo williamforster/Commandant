@@ -7,7 +7,7 @@
 /* Popup for data point - what time it was */
 #map-datapoint-popup {
     position: absolute;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.75);
     -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
     filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
     padding: 15px;
@@ -15,7 +15,7 @@
     border: 1px solid #cccccc;
     bottom: 12px;
     left: -50px;
-    min-width: 120px;
+    min-width: 70px;
 }
 #map-datapoint-popup:after, #map-datapoint-popup:before {
     top: 100%;
@@ -37,13 +37,4 @@
     border-width: 11px;
     left: 48px;
     margin-left: -11px;
-  }
-  #map-datapoint-popup-closer {
-    text-decoration: none;
-    position: absolute;
-    top: 2px;
-    right: 8px;
-  }
-  #map-datapoint-popup-closer:after {
-    content: "✖";
   }
