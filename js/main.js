@@ -7,11 +7,11 @@ import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer.js';
 import { OSM, Vector as VectorSource } from 'ol/source.js';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
 import Overlay from 'ol/Overlay.js';
-var getPoints = require('./js/get_geodata.js');
-var constants = require('./js/constants.js');
-var getGeodata = require('./js/get_geodata.js');
-var processData = require('./js/process_data.js');
-var ui = require('./js/ui.js');
+var getPoints = require('./get_geodata.js');
+var constants = require('./constants.js');
+var getGeodata = require('./get_geodata.js');
+var processData = require('./process_data.js');
+var ui = require('./ui.js');
 
 // Use the OpenStreetMap database
 var raster = new TileLayer({
@@ -31,7 +31,6 @@ var map = new Map({
   layers: [raster], //, vector],
   overlays: [mapDatapointPopupOverlay],
   target: 'map',
-  renderer: 'webgl',
   view: new View({
     projection: constants.COORDINATE_REFERENCE_SYSTEM,
     center: constants.MAP_START_LOCATION,
@@ -43,12 +42,24 @@ var map = new Map({
 //   alert(evt.coordinate);
 // });
 
-var clickSelect = new Select({condition: click});
-var hoverSelect = new Select({
-  condition: pointerMove,
+var clickSelect = new Select({
+  condition: click,
+  hitTolerance: 2,
+  // Do not select ui layers
   // selectable is not an official property so may not be in all layers
   layers: function(layer) {return layer.getProperties()['selectable'] != false}
 });
+var hoverSelect = new Select({
+  condition: pointerMove,
+  hitTolerance: 2,
+  // Do not select ui layers
+  // selectable is not an official property so may not be in all layers
+  layers: function(layer) {return layer.getProperties()['selectable'] != false}
+});
+hoverSelect.on('select', function(evt){
+  console.log("HI");
+});
+
 map.addInteraction(clickSelect);
 map.addInteraction(hoverSelect);
 
@@ -62,7 +73,8 @@ map.on('pointermove', function(evt) {
     mapDatapointPopupOverlay,
     document.getElementById('map-datapoint-popup-content'),
     clickSelect.getFeatures(),
-    evt);
+    hoverSelect.getFeatures()
+  );
 });
 
 // Run an ajax query to get the data points and add them to the map

@@ -7,27 +7,33 @@ const LOCATION_DATA_URL = 'ajax_get_data.php';
 /**
  * Do an ajax request for some data, and convert it to a 2d array of rows. Return a promise
  * with the rows as parameter.
- * Parameters:
- * map: the openlayers map to add a layer to
  */
 module.exports = function getPoints() {
     return new Promise(function(resolve, reject) {
         get(LOCATION_DATA_URL).then(function(response) {
-            var rows = response.split('\n');
-            if (rows[rows.length - 1].length === 0) { rows.pop(); }
-            for (var rownum in rows) {
-                rows[rownum] = rows[rownum].split(',');
+            var rowsin = response.split('\n');
+            var rowsout = [];
+            // Remove an empty line at the end
+            if (rowsin[rowsin.length - 1].length === 0) { rowsin.pop(); }
+
+            for (var row of rowsin) {
+                var parts = row.split(',');
+                if (parts.length <= constants.SIGNAL_COL) { 
+                  console.log("Bad data returned from server:" + row)
+                  continue;
+                }
                 // convert all numbers to numbers
-                rows[rownum][constants.DATETIME_COL] = 
-                        new Date(rows[rownum][constants.DATETIME_COL].replace(" ", "T") + "Z");
-                rows[rownum][constants.LONGTITUDE_COL] = 
-                        parseFloat(rows[rownum][constants.LONGTITUDE_COL]);
-                rows[rownum][constants.LATITUDE_COL] = 
-                        parseFloat(rows[rownum][constants.LATITUDE_COL]);
-                rows[rownum][constants.FILL_COL] = 
-                        parseFloat(rows[rownum][constants.FILL_COL]);
+                parts[constants.DATETIME_COL] = 
+                        new Date(parts[constants.DATETIME_COL].replace(" ", "T") + "Z");
+                parts[constants.LONGTITUDE_COL] = 
+                        parseFloat(parts[constants.LONGTITUDE_COL]);
+                parts[constants.LATITUDE_COL] = 
+                        parseFloat(parts[constants.LATITUDE_COL]);
+                parts[constants.FILL_COL] = 
+                        parseFloat(parts[constants.FILL_COL]);
+                rowsout.push(parts);
             }
-            resolve(rows);
+            resolve(rowsout);
         });
     });
 }

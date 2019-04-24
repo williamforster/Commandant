@@ -24,6 +24,7 @@ exports.addColumnsToData = function(rows) {
     // sort by time and add the additional columns
     rows.sort(function(a, b) { return a[constants.DATETIME_COL] > b[constants.DATETIME_COL]; });
     // TODO: remove outliers - fit to a linear regression
+    if (rows === undefined || !isArray(rows) || rows.length === 0) { return rows; }
     rows[0][constants.DEBRIS_DENSITY_COL] = 0;
     rows[0][constants.PREVIOUS_COORDS] = 
             [rows[0][constants.LONGTITUDE_COL], rows[0][constants.LATITUDE_COL]];
@@ -126,7 +127,7 @@ exports.addBucketsToMap = function(map, buckets) {
         geojsonObject['features'].push(getGeoJSONLineString(buckets[i]));
         var c = colorConvert.hsv.rgb((i * HUE_STEP) % MAX_HUE, LINE_SATURATION, LINE_VALUE);
         addGeojsonToMap(map, geojsonObject, 'rgba(' + c[0] + ',' + c[1] + 
-                ',' + c[2] + ',' + ALPHA + ')');
+                ',' + c[2] + ',' + ALPHA + ')', false   );
         ret.push(geojsonObject);
     }
 
@@ -156,8 +157,9 @@ exports.addBucketsToMap = function(map, buckets) {
  * @param {ol map} map : An openlayers map
  * @param {object} geojsonObject : A geojson feature collection
  * @param {string} color : A color like '#0000ff' or 'rgba(0,0,0,0.5)'
+ * @param {boolean} selectable : Whether the layer should be selectable
  */
-function addGeojsonToMap(map, geojsonObject, color) {
+function addGeojsonToMap(map, geojsonObject, color, selectable = true) {
     var vectorSource = new VectorSource({
         features: (new GeoJSON({
             'dataProjection': constants.COORDINATE_REFERENCE_SYSTEM,
@@ -169,6 +171,7 @@ function addGeojsonToMap(map, geojsonObject, color) {
         source: vectorSource,
         updateWhileAnimating: true,
         updateWhileInteracting: true,
+        selectable: selectable,
         style: new Style({
             fill: new Fill({
               color: color

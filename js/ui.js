@@ -32,16 +32,13 @@ exports.panToExtentOfData = function(map, rows) {
  * map: The ol map
  * overlay: The ol overlay the popup is on
  * documentElement: The DOM element to change the innerHTML of (write the time there)
- * selected: ol/Collection of selected features
- * event: The pointer move event
+ * @param {Collection} clickSelected: ol/Collection of selected features (from click not hover)
+ * @param {Collection} hoverSelected: ol/Collection of selected features
  */
-exports.updateUi = function(map, overlay, documentElement, selected, event) {
-    var pixel = map.getEventPixel(event.originalEvent);
-    var feature = map.forEachFeatureAtPixel(pixel, function(feature) {
-        return feature;
-    });
+exports.updateUi = function(map, overlay, documentElement, clickSelected, hoverSelected) {
+    var feature = hoverSelected.item(0);
 
-    updateShownPathLayer(map, feature, selected.item(0));
+    updateShownPathLayer(map, feature, clickSelected.item(0));
 
     if (feature && feature.getProperties()['type'] && feature.getProperties()['type']=='Point') {
         overlay.setPosition(feature.getGeometry()['flatCoordinates']);
@@ -49,10 +46,10 @@ exports.updateUi = function(map, overlay, documentElement, selected, event) {
         var timeString = pad(d.getHours(), 2) + ':' + pad(d.getMinutes(), 2) + ':' + pad(d.getSeconds(), 2);
         
         // Work out time diff to selected if they are on same vector layer (same journey)
-        if (selected.getLength() > 0 && 
-                selected.item(0).getProperties()['time'] !== 'undefined' &&
-                inSameLayer(map, selected.item(0), feature)) {
-            var old = selected.item(0).getProperties()['time'];
+        if (clickSelected.getLength() > 0 && 
+                clickSelected.item(0).getProperties()['time'] !== 'undefined' &&
+                inSameLayer(map, clickSelected.item(0), feature)) {
+            var old = clickSelected.item(0).getProperties()['time'];
             var minutesDifference = Math.round(0.5 + Math.abs((d - old) / MILLISECONDS_PER_MINUTE));
             timeString = minutesDifference.toString() + " min<br>" + timeString;
         }
