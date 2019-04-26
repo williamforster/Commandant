@@ -3,24 +3,26 @@ import {  Vector as VectorSource } from 'ol/source.js';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import { isArray } from 'util';
+import * as constants from './constants'
 var colorConvert = require('color-convert');
-var constants = require('./constants.js');
 
 // Dot and line HSV
-const DOT_SATURATION = 78.6;
-const DOT_VALUE = 55.9;
-const LINE_SATURATION = 67.6;
-const LINE_VALUE = 85.9;
-const ALPHA = 0.6;
+const LINE_SATURATION = 40;
+const LINE_VALUE = 70;
+const ALPHA = 1;
 const MAX_HUE = 360;
 const HUE_STEP = 212; // Increase hue by this for each new journey
+const DOT_SIZE = 4; // px radius
+const DOT_OUTLINE_COLOR = 'rgba(0,0,0,0.4)';
+const DOT_OUTLINE_WIDTH = 2;
+const STROKE_WIDTH = 8;
 
 /**
  * Using the data already in the columns, generate extra data like debris density,
  * previous coord, and next coord. Return a new array.
  * @param {2d array} rows : An array of db rows like in the example at top of this file.
  */
-exports.addColumnsToData = function(rows) {
+export function addColumnsToData(rows) {
     // sort by time and add the additional columns
     rows.sort(function(a, b) { return a[constants.DATETIME_COL] > b[constants.DATETIME_COL]; });
     // TODO: remove outliers - fit to a linear regression
@@ -56,7 +58,7 @@ exports.addColumnsToData = function(rows) {
  * Also distinguish between dot euis
  * @param {2d array} rows : All the data
  */
-exports.sortDataIntoDays = function(rows) {
+export function sortDataIntoDays(rows) {
     // Sort by euid then by date
     rows.sort(function(a, b) { 
         if (a[constants.EUID_COL] === b[constants.EUID_COL]) { 
@@ -93,7 +95,7 @@ exports.sortDataIntoDays = function(rows) {
  * Return the coords of the bounding box for these rows as [minLon, minLat, maxLon, maxLat]
  * @param {2d array} rows : the data in an array
  */
-exports.getExtent = function(rows) {
+export function getExtent(rows) {
     var extent = [Infinity, Infinity, -Infinity, -Infinity];
     if (rows.length > 0) {
         for (var row of rows) {
@@ -114,7 +116,7 @@ exports.getExtent = function(rows) {
  * @param {ol map} map : The ol map object
  * @param {array} buckets : Array of arrays of row. Row is an array like [euid, time, lon ...]
  */
-exports.addBucketsToMap = function(map, buckets) {
+export function addJourneysToMap(map, buckets) {
     var ret = [];
     // Add lines to map
     for (var i = 0; i < buckets.length; ++i) {
@@ -129,24 +131,20 @@ exports.addBucketsToMap = function(map, buckets) {
         addGeojsonToMap(map, geojsonObject, 'rgba(' + c[0] + ',' + c[1] + 
                 ',' + c[2] + ',' + ALPHA + ')', false   );
         ret.push(geojsonObject);
-    }
+    //}
 
     // Add dots to map
-    for (var i = 0; i < buckets.length; ++i) {
+    //for (var i = 0; i < buckets.length; ++i) {
         if (buckets[i].length === 0) { continue; }
         // Make a geoJSON object
         var geojsonObject = {
             type:'FeatureCollection',
             features: []
         }
-        
         for (var item of buckets[i]) {
-            // Add features to it
             geojsonObject['features'].push(getGeoJSONPoint(item));
         }
-        var c = colorConvert.hsv.rgb((i * HUE_STEP) % MAX_HUE, DOT_SATURATION, DOT_VALUE);
-        addGeojsonToMap(map, geojsonObject, 'rgba(' + c[0] + ',' + c[1] + 
-        ',' + c[2] + ',' + ALPHA + ')');
+        addGeojsonToMap(map, geojsonObject, 'rgba(0,0,0,1)');
         ret.push(geojsonObject);
     }
     return ret;
@@ -178,12 +176,16 @@ function addGeojsonToMap(map, geojsonObject, color, selectable = true) {
             }),
             stroke: new Stroke({
               color: color,
-              width: 4
+              width: STROKE_WIDTH
             }),
             image: new CircleStyle({
-              radius: 6,
+              radius: DOT_SIZE,
               fill: new Fill({
-                color: color
+                color: 'white'
+              }),
+              stroke: new Stroke({
+                  color: DOT_OUTLINE_COLOR,
+                  width: DOT_OUTLINE_WIDTH
               })
             })
         })
@@ -233,7 +235,8 @@ function getGeoJSONLineString(rows) {
             }
         }
         for (var row of rows) {
-            ret['geometry']['coordinates'].push(row[constants.PREVIOUS_COORDS]);
+            ret['geometry']['coordinates'].push(
+                    [row[constants.LONGTITUDE_COL], row[constants.LATITUDE_COL]]);
         }
         return ret;
     } else {

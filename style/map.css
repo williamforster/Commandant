@@ -1,3 +1,7 @@
+:root {
+  --popup-color: rgba(255,255,255,0.75);
+}
+
 /* Map div */
 #map {
     min-width: 750px;
@@ -8,7 +12,7 @@
 /* Popup for data point - what time it was */
 #map-datapoint-popup {
     position: absolute;
-    background-color: rgba(255, 255, 255, 0.75);
+    background-color: var(--popup-color);
     -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
     filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
     padding: 7px;
@@ -28,7 +32,7 @@
     pointer-events: none;
   }
   #map-datapoint-popup:after {
-    border-top-color: white;
+    border-top-color: var(--popup-color);
     border-width: 10px;
     left: 48px;
     margin-left: -10px;

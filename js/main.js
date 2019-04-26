@@ -1,17 +1,18 @@
+import {color, asArray} from 'ol/color.js'
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
-import { Draw, Modify, Snap } from 'ol/interaction.js';
 import {click, pointerMove} from 'ol/events/condition.js';
 import Select from 'ol/interaction/Select.js'
 import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer.js';
 import { OSM, Vector as VectorSource } from 'ol/source.js';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
 import Overlay from 'ol/Overlay.js';
-var getPoints = require('./get_geodata.js');
-var constants = require('./constants.js');
-var getGeodata = require('./get_geodata.js');
-var processData = require('./process_data.js');
-var ui = require('./ui.js');
+import {hsv} from 'color-convert';
+
+import {getPoints} from './get_geodata';
+import {addColumnsToData, addJourneysToMap, sortDataIntoDays} from './process_data';
+import {panToExtentOfData, updateUi} from './ui';
+import * as constants from './constants'
 
 // Use the OpenStreetMap database
 var raster = new TileLayer({
@@ -57,7 +58,7 @@ var hoverSelect = new Select({
   layers: function(layer) {return layer.getProperties()['selectable'] != false}
 });
 hoverSelect.on('select', function(evt){
-  console.log("HI");
+
 });
 
 map.addInteraction(clickSelect);
@@ -68,7 +69,7 @@ map.on('pointermove', function(evt) {
   if (evt.dragging) {
     return;
   }
-  ui.updateUi(
+  updateUi(
     map, 
     mapDatapointPopupOverlay,
     document.getElementById('map-datapoint-popup-content'),
@@ -80,10 +81,69 @@ map.on('pointermove', function(evt) {
 // Run an ajax query to get the data points and add them to the map
 $(document).ready(function() {
   getPoints().then(function(rows) {
-    rows = processData.addColumnsToData(rows);
+    rows = addColumnsToData(rows);
     console.log(rows);
-    ui.panToExtentOfData(map, rows);
-    var days = processData.sortDataIntoDays(rows);
-    var geojsons = processData.addBucketsToMap(map, days);
+    panToExtentOfData(map, rows);
+    var days = sortDataIntoDays(rows);
+    var geojsons = addJourneysToMap(map, days);
   });
 })
+
+function setAlpha(alpha) {
+  map.getLayers().forEach(function(layer) {
+    if (layer instanceof VectorLayer) {
+      var s = layer.getStyle();
+      if (s != undefined) {
+        var c = asArray(s.getStroke().getColor());
+        s.getStroke().setColor('rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha + ')');
+        c = asArray(s.getImage().getFill().getColor());
+        s.setImage(new CircleStyle({
+          radius: 5,
+          fill: new Fill({
+            color: 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha + ')'
+          })
+        }));
+        c = asArray(s.getFill().getColor());
+        s.getFill().setColor('rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha + ')');
+      }
+    }
+  });
+}
+
+function setStyle(colorStep, saturation, value, outlinealpha = 1) {
+  var max_hue = 360;
+  var count = 0;
+  var layers = map.getLayers().getArray();
+  for (var i = layers.length - 1; i >= 0; i--) {
+    var layer = layers[i];
+    var c = hsv.rgb((Math.floor(count++ / 2) * colorStep) % max_hue, saturation, value);
+    var color = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',1)';
+    if (layer instanceof VectorLayer) {
+      layer.setStyle(new Style({
+          fill: new Fill({
+            color: color
+          }),
+          stroke: new Stroke({
+            color: color,
+            width: 8
+          }),
+          image: new CircleStyle({
+            radius: 4,
+            fill: new Fill({
+              color: 'white'
+            }),
+            stroke: new Stroke({
+              color: 'rgba(0,0,0,' + outlinealpha + ')',
+              width: 2
+            })
+          })
+      }));
+    }
+  }
+}
+
+$.exposed = {
+  map: map,
+  setAlpha: setAlpha,
+  setStyle: setStyle
+};

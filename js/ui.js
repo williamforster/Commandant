@@ -7,8 +7,7 @@ import VectorLayer from 'ol/layer/Vector.js';
 import { Layer } from 'ol/layer';
 import { Style, Stroke } from 'ol/style';
 import VectorSource from 'ol/source/Vector';
-var constants = require('./constants.js');
-var processData = require('./process_data.js');
+import {getExtent} from './process_data';
 
 // The name that identifies the vector layer showing a path between 2 selected points
 const PATH_LAYER_NAME = 'showPathLayer';
@@ -18,8 +17,8 @@ const dayString = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const monthString = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
         "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-exports.panToExtentOfData = function(map, rows) {
-    var extent = processData.getExtent(rows);
+export function panToExtentOfData(map, rows) {
+    var extent = getExtent(rows);
     var center = [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
     var view = map.getView();
     var zoom = -PADDING + view.getZoomForResolution(view.getResolutionForExtent(extent));
@@ -35,7 +34,7 @@ exports.panToExtentOfData = function(map, rows) {
  * @param {Collection} clickSelected: ol/Collection of selected features (from click not hover)
  * @param {Collection} hoverSelected: ol/Collection of selected features
  */
-exports.updateUi = function(map, overlay, documentElement, clickSelected, hoverSelected) {
+export function updateUi(map, overlay, documentElement, clickSelected, hoverSelected) {
     var feature = hoverSelected.item(0);
 
     updateShownPathLayer(map, feature, clickSelected.item(0));
@@ -140,7 +139,7 @@ function initializeShowPathLayer(map) {
         style: new Style({
             stroke: new Stroke({
                 color: 'rgba(255,255,0,1.0)',
-                width: 4
+                width: 6
             })
         }),
         source: new VectorSource({

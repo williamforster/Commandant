@@ -1,6 +1,5 @@
 var constants = require('./constants.js');
 
-
 // Where to look for geo data
 const LOCATION_DATA_URL = 'ajax_get_data.php';
 
@@ -8,7 +7,7 @@ const LOCATION_DATA_URL = 'ajax_get_data.php';
  * Do an ajax request for some data, and convert it to a 2d array of rows. Return a promise
  * with the rows as parameter.
  */
-module.exports = function getPoints() {
+export function getPoints() {
     return new Promise(function(resolve, reject) {
         get(LOCATION_DATA_URL).then(function(response) {
             var rowsin = response.split('\n');

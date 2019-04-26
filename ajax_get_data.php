@@ -7,7 +7,7 @@
     // $stmt->execute(array($id, $name));
     $stmt = $pdo->prepare(
             'SELECT `dot_euid`,`time`,`longtitude`,`latitude`,`fill`,`signal_strength`' . 
-            ' FROM ' . $DB_TABLE_NAME);
+            ' FROM ' . $DB_TABLE_NAME . ' ORDER BY `time` DESC LIMIT 5000');
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
