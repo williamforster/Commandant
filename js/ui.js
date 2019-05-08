@@ -7,7 +7,7 @@ import VectorLayer from 'ol/layer/Vector.js';
 import { Layer } from 'ol/layer';
 import { Style, Stroke } from 'ol/style';
 import VectorSource from 'ol/source/Vector';
-import {getExtent} from './process_data';
+import {getExtent, sortDatetime} from './process_data';
 
 // The name that identifies the vector layer showing a path between 2 selected points
 const PATH_LAYER_NAME = 'showPathLayer';
@@ -166,7 +166,9 @@ function getPathBetweenPoints(features, feature1, feature2) {
 
     // Get just the features between 1 and 2 in order
     var includedCoords = [];
-    features.sort(function(a, b) { return a.getProperties()['time'] < b.getProperties()['time']});
+    features.sort(function(a, b) {
+        return sortDatetime(a.getProperties()['time'], b.getProperties()['time']);
+    });
     var found = false;
     for (var f of features) {
         if (!found) {

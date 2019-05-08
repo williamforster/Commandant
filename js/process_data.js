@@ -7,8 +7,8 @@ import * as constants from './constants'
 var colorConvert = require('color-convert');
 
 // Dot and line HSV
-const LINE_SATURATION = 40;
-const LINE_VALUE = 70;
+const LINE_SATURATION = 55;
+const LINE_VALUE = 85;
 const ALPHA = 1;
 const MAX_HUE = 360;
 const HUE_STEP = 212; // Increase hue by this for each new journey
@@ -24,7 +24,9 @@ const STROKE_WIDTH = 8;
  */
 export function addColumnsToData(rows) {
     // sort by time and add the additional columns
-    rows.sort(function(a, b) { return a[constants.DATETIME_COL] > b[constants.DATETIME_COL]; });
+    rows.sort(function(a, b) { 
+        return sortDatetime(a[constants.DATETIME_COL], b[constants.DATETIME_COL]);
+    });
     // TODO: remove outliers - fit to a linear regression
     if (rows === undefined || !isArray(rows) || rows.length === 0) { return rows; }
     rows[0][constants.DEBRIS_DENSITY_COL] = 0;
@@ -62,7 +64,7 @@ export function sortDataIntoDays(rows) {
     // Sort by euid then by date
     rows.sort(function(a, b) { 
         if (a[constants.EUID_COL] === b[constants.EUID_COL]) { 
-            return a[constants.DATETIME_COL] > b[constants.DATETIME_COL];
+            return sortDatetime(a[constants.DATETIME_COL] > b[constants.DATETIME_COL]);
         }
         return a[constants.EUID_COL] > b[constants.EUID_COL];
     });
@@ -140,7 +142,7 @@ export function addJourneysToMap(map, buckets) {
         var geojsonObject = {
             type:'FeatureCollection',
             features: []
-        }
+        };
         for (var item of buckets[i]) {
             geojsonObject['features'].push(getGeoJSONPoint(item));
         }
@@ -148,6 +150,17 @@ export function addJourneysToMap(map, buckets) {
         ret.push(geojsonObject);
     }
     return ret;
+}
+
+/**
+ * Function for sorting javascript date objects (ascending)
+ * @param {Date} a 
+ * @param {Date} b 
+ */
+export function sortDatetime(a, b) {
+    if (b > a) { return 1; }
+    else if (a > b) { return -1; }
+    return 0;
 }
 
 /**

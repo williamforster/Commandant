@@ -1,5 +1,4 @@
-var constants = require('./constants.js');
-
+import * as constants from './constants'
 // Where to look for geo data
 const LOCATION_DATA_URL = 'ajax_get_data.php';
 
@@ -80,7 +79,7 @@ function get(url) {
  */
 function sortDataIntoBuckets(rows, sortColumn, numBuckets) {
     // Now sort by debris density and divide into 'buckets'
-    rows.sort(function(a, b) { return a[sortColumn] > b[sortColumn]; });
+    rows.sort(function(a, b) { return b[sortColumn] - a[sortColumn]; });
     // Create a dynamic array (empty)
     var buckets = Array.from({ length: numBuckets }, (_, idx) => `${++idx}`)
     for (var bucketNum in buckets) { buckets[bucketNum] = []; }
