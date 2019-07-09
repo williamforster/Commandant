@@ -1,4 +1,4 @@
-Commandant displays time-based geoJSON on a map
+SmartVac displays GPS and other data on a map.
 
 ![Screenshot of application](screenshot.png?raw=true "Screenshot")
 
@@ -9,7 +9,7 @@ Download xampp or a similar software and find the website directory (htdocs)
 Remove the default xampp webpage so the htdocs directory is empty.
 Navigate to htdocs and clone into the current directory.
 
-    git clone https://github.com/williamforster/Commandant.git .
+    git clone https://github.com/williamforster/SmartVac.git .
 
 Download and install node.
 Then install the project dependencies.
