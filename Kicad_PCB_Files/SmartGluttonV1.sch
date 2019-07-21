@@ -33,6 +33,7 @@ F 0 "U2" H 6200 1308 50  0000 C CNN
 F 1 "MCP1700-3002E_TO92" H 6200 1399 50  0000 C CNN
 F 2 "Package_TO_SOT_THT:TO-92_HandSolder" H 6200 1350 50  0001 C CIN
 F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/20001826D.pdf" H 6200 1550 50  0001 C CNN
+F 4 "ETSG" H 6200 1550 50  0001 C CNN "Vendor"
 	1    6200 1550
 	-1   0    0    1   
 $EndComp
@@ -44,6 +45,7 @@ F 0 "J6" H 9770 1489 50  0000 R CNN
 F 1 "USB_B" H 9770 1398 50  0000 R CNN
 F 2 "SmartGluttonV1:USB_B_Molex_USB-67068-xx1x_StraightTab_Horizontal" H 10150 1450 50  0001 C CNN
 F 3 " ~" H 10150 1450 50  0001 C CNN
+F 4 "https://au.rs-online.com/web/p/type-b-usb-connectors/8006860/" H 10000 1500 50  0001 C CNN "Vendor"
 	1    10000 1500
 	-1   0    0    -1  
 $EndComp
@@ -77,6 +79,7 @@ F 0 "U1" H 3200 5800 50  0000 C CNN
 F 1 "FT231XS" H 3200 5700 50  0000 C CNN
 F 2 "Package_SO:SSOP-20_3.9x8.7mm_P0.635mm" H 4150 3900 50  0001 C CNN
 F 3 "http://www.ftdichip.com/Products/ICs/FT231X.html" H 3550 4850 50  0001 C CNN
+F 4 "https://au.rs-online.com/web/p/universal-asynchronous-receivers-transmitters/7570032/" H 3550 4850 50  0001 C CNN "Vendor"
 	1    3550 4850
 	1    0    0    -1  
 $EndComp
@@ -99,6 +102,7 @@ F 0 "R1" V 2500 4400 50  0000 C CNN
 F 1 "27" V 2200 4550 50  0000 C CNN
 F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 2230 4550 50  0001 C CNN
 F 3 "~" H 2300 4550 50  0001 C CNN
+F 4 "ETSG" V 2300 4550 50  0001 C CNN "Vendor"
 	1    2300 4550
 	0    1    1    0   
 $EndComp
@@ -110,6 +114,7 @@ F 0 "R2" V 2100 4500 50  0000 C CNN
 F 1 "27" V 2400 4650 50  0000 C CNN
 F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 2230 4650 50  0001 C CNN
 F 3 "~" H 2300 4650 50  0001 C CNN
+F 4 "ETSG" V 2300 4650 50  0001 C CNN "Vendor"
 	1    2300 4650
 	0    1    1    0   
 $EndComp
@@ -125,6 +130,7 @@ F 0 "C3" H 1815 4846 50  0000 L CNN
 F 1 "47pF" H 1815 4755 50  0000 L CNN
 F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 1738 4650 50  0001 C CNN
 F 3 "~" H 1700 4800 50  0001 C CNN
+F 4 "ETSG" H 1700 4800 50  0001 C CNN "Vendor"
 	1    1700 4800
 	1    0    0    -1  
 $EndComp
@@ -136,6 +142,7 @@ F 0 "C2" H 1365 4846 50  0000 L CNN
 F 1 "47pF" H 1365 4755 50  0000 L CNN
 F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 1288 4650 50  0001 C CNN
 F 3 "~" H 1250 4800 50  0001 C CNN
+F 4 "ETSG" H 1250 4800 50  0001 C CNN "Vendor"
 	1    1250 4800
 	1    0    0    -1  
 $EndComp
@@ -190,6 +197,7 @@ F 0 "C4" H 2565 4146 50  0000 L CNN
 F 1 "100nF" H 2565 4055 50  0000 L CNN
 F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 2488 3950 50  0001 C CNN
 F 3 "~" H 2450 4100 50  0001 C CNN
+F 4 "ETSG" H 2450 4100 50  0001 C CNN "Vendor"
 	1    2450 4100
 	1    0    0    -1  
 $EndComp
@@ -282,6 +290,7 @@ F 0 "C1" H 1315 1296 50  0000 L CNN
 F 1 "100nF" H 1315 1205 50  0000 L CNN
 F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 1238 1100 50  0001 C CNN
 F 3 "~" H 1200 1250 50  0001 C CNN
+F 4 "ETSG" H 1200 1250 50  0001 C CNN "Vendor"
 	1    1200 1250
 	1    0    0    -1  
 $EndComp
@@ -416,6 +425,7 @@ F 0 "MCU1" V 7004 6078 50  0000 L CNN
 F 1 "mDot" V 7095 6078 50  0000 L CNN
 F 2 "SmartGluttonV1:mdot" H 7050 5050 50  0001 C CNN
 F 3 "" H 7050 5050 50  0001 C CNN
+F 4 "2mm pitch headers 10x1 10x1 8x1" V 7050 5050 50  0001 C CNN "Vendor"
 	1    7050 5050
 	0    1    1    0   
 $EndComp
@@ -501,6 +511,7 @@ F 0 "FB1" V 5126 3250 50  0000 C CNN
 F 1 "47@100MHz" V 5217 3250 50  0000 C CNN
 F 2 "Inductor_SMD:L_0603_1608Metric_Pad1.05x0.95mm_HandSolder" V 5330 3250 50  0001 C CNN
 F 3 "~" H 5400 3250 50  0001 C CNN
+F 4 "rs-online https://au.rs-online.com/web/p/wire-wound-surface-mount-inductors/7242989/" V 5400 3250 50  0001 C CNN "Vendor"
 	1    5400 3250
 	0    1    1    0   
 $EndComp
@@ -512,6 +523,7 @@ F 0 "C6" H 5218 3446 50  0000 L CNN
 F 1 "4.7uF" H 5218 3355 50  0000 L CNN
 F 2 "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm" H 5138 3250 50  0001 C CNN
 F 3 "~" H 5100 3400 50  0001 C CNN
+F 4 "ETSG" H 5100 3400 50  0001 C CNN "Vendor"
 	1    5100 3400
 	1    0    0    -1  
 $EndComp
@@ -523,6 +535,7 @@ F 0 "C5" H 4865 3446 50  0000 L CNN
 F 1 "100nF" H 4865 3355 50  0000 L CNN
 F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 4788 3250 50  0001 C CNN
 F 3 "~" H 4750 3400 50  0001 C CNN
+F 4 "ETSG" H 4750 3400 50  0001 C CNN "Vendor"
 	1    4750 3400
 	1    0    0    -1  
 $EndComp
@@ -668,6 +681,7 @@ F 0 "J5" H 9370 5039 50  0000 R CNN
 F 1 "USB_A" H 9370 4948 50  0000 R CNN
 F 2 "SmartGluttonV1:USB_A_FCI_87583_Horizontal" H 9750 5000 50  0001 C CNN
 F 3 " ~" H 9750 5000 50  0001 C CNN
+F 4 "ETSG" H 9600 5050 50  0001 C CNN "Vendor"
 	1    9600 5050
 	-1   0    0    -1  
 $EndComp
@@ -754,6 +768,7 @@ F 0 "SW2" V 704 1648 50  0000 L CNN
 F 1 "Reset" V 795 1648 50  0000 L CNN
 F 2 "Button_Switch_THT:SW_PUSH_6mm" H 750 1700 50  0001 C CNN
 F 3 "~" H 750 1700 50  0001 C CNN
+F 4 "ETSG 6x6x4.3" V 750 1500 50  0001 C CNN "Vendor"
 	1    750  1500
 	0    1    1    0   
 $EndComp
@@ -771,6 +786,7 @@ F 0 "R9" H 10170 2196 50  0000 L CNN
 F 1 "0R OPT" H 10170 2105 50  0000 L CNN
 F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 10030 2150 50  0001 C CNN
 F 3 "~" H 10100 2150 50  0001 C CNN
+F 4 "ETSG" H 10100 2150 50  0001 C CNN "Vendor"
 	1    10100 2150
 	1    0    0    -1  
 $EndComp
@@ -903,6 +919,7 @@ F 0 "R10" H 9770 5646 50  0000 L CNN
 F 1 "0R OPT" H 9770 5555 50  0000 L CNN
 F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 9630 5600 50  0001 C CNN
 F 3 "~" H 9700 5600 50  0001 C CNN
+F 4 "ETSG" H 9700 5600 50  0001 C CNN "Vendor"
 	1    9700 5600
 	1    0    0    -1  
 $EndComp
@@ -931,7 +948,7 @@ U 1 1 5D24E80E
 P 7550 2150
 F 0 "J8" V 7488 1862 50  0000 R CNN
 F 1 "Ultrasonic Conn" V 7397 1862 50  0000 R CNN
-F 2 "" H 7550 2150 50  0001 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical" H 7550 2150 50  0001 C CNN
 F 3 "~" H 7550 2150 50  0001 C CNN
 	1    7550 2150
 	0    -1   -1   0   
@@ -982,6 +999,7 @@ F 0 "SW1" H 4000 3717 50  0000 C CNN
 F 1 "UART_PWR" H 4000 3626 50  0000 C CNN
 F 2 "Package_DIP:DIP-4_W7.62mm_LongPads" H 4000 3350 50  0001 C CNN
 F 3 "~" H 4000 3350 50  0001 C CNN
+F 4 "ETSG" H 4000 3350 50  0001 C CNN "Vendor"
 	1    4000 3350
 	-1   0    0    -1  
 $EndComp
