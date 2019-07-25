@@ -4,9 +4,12 @@
 
 /* Map div */
 #map {
-    margin: 0 auto;
-    width: 98%;
-    height: 100%;
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 /* Popup for data point - what time it was */
