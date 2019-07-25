@@ -208,8 +208,7 @@ function addGeojsonToMap(map, geojsonObject, color, selectable = true) {
 
 /**
  * Convert a row of data into geoJSON
- * Parameters:
- * row: An array with information as laid out in the constants at the top of this file
+ * @param {array} row An array with information as laid out in the constants in constants.js
  */
 function getGeoJSONPoint(row) {
     if (row && isArray(row) && row.length > constants.NEXT_COORDS)  {

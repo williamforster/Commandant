@@ -1,14 +1,14 @@
 {
-  "name": "VehicleTracker",
+  "name": "SmartVac",
   "version": "1.0.0",
-  "description": "Viewing geojson data on a map",
+  "description": "Viewing geodata on a map",
   "main": "js/main.js",
   "scripts": {
-    "dev": "browserify -g [ babelify --presets [ \"@babel/preset-env\" ] ] js/main.js > bundle.js",
-    "build": "browserify -g [ babelify --presets [ \"@babel/preset-env\" ] ] -g uglifyify --entry js/main.js > bundle.js"
+    "build": "browserify -g [ babelify --presets [ \"@babel/preset-env\" ] ] js/main.js > bundle.js"
   },
   "dependencies": {
-    "ol": "^5.1.3"
+    "ol": "^5.1.3",
+    "ol-contextmenu": "^3.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.56",
@@ -16,7 +16,6 @@
     "babelify": "^9.0.0",
     "browserify": "^16.2.3",
     "color-convert": "^2.0.0",
-    "uglifyify": "^5.0.1",
     "qunit": "^2.9.2"
   }
 }

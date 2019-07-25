@@ -7,11 +7,12 @@ import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer.js';
 import { OSM, Vector as VectorSource } from 'ol/source.js';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
 import Overlay from 'ol/Overlay.js';
+import ContextMenu from 'ol-contextmenu/dist/ol-contextmenu.js';
 import {hsv} from 'color-convert';
 
 import {getPoints} from './get_geodata';
 import {addColumnsToData, addJourneysToMap, sortDataIntoDays} from './process_data';
-import {panToExtentOfData, updateUi} from './ui';
+import {deleteSelected, panToExtentOfData, updateUi} from './ui';
 import * as constants from './constants'
 
 // Use the OpenStreetMap database
@@ -39,10 +40,7 @@ var map = new Map({
   }),
 });
 
-// map.on('singleclick', function(evt) {
-//   alert(evt.coordinate);
-// });
-
+/** Click button selects a point */
 var clickSelect = new Select({
   condition: click,
   hitTolerance: 2,
@@ -50,6 +48,7 @@ var clickSelect = new Select({
   // selectable is not an official property so may not be in all layers
   layers: function(layer) {return layer.getProperties()['selectable'] != false}
 });
+/** Hovering selects a point  */
 var hoverSelect = new Select({
   condition: pointerMove,
   hitTolerance: 2,
@@ -60,9 +59,23 @@ var hoverSelect = new Select({
 hoverSelect.on('select', function(evt){
 
 });
-
 map.addInteraction(clickSelect);
 map.addInteraction(hoverSelect);
+
+/** Right click menu */
+var contextmenu = new ContextMenu({
+  width: 170,
+  defaultItems: true, // defaultItems are (for now) Zoom In/Zoom Out
+  items: [
+    {
+      text: 'Delete',
+      classname: 'some-style-class',
+      callback: deleteSelected
+    },
+    '-' // this is a separator
+  ]
+});
+map.addControl(contextmenu);
 
 // Check if mouse is over a dot and show/hide popup depending
 map.on('pointermove', function(evt) {
@@ -80,6 +93,10 @@ map.on('pointermove', function(evt) {
 
 // Run an ajax query to get the data points and add them to the map
 $(document).ready(function() {
+  // Add hidden class to right click menu, so behaviour is correct
+  $(".ol-ctx-menu-container").addClass("ol-ctx-menu-hidden");
+
+  // Download data points
   getPoints().then(function(rows) {
     rows = addColumnsToData(rows);
     console.log(rows);
@@ -88,6 +105,7 @@ $(document).ready(function() {
     var geojsons = addJourneysToMap(map, days);
   });
 })
+
 
 function setAlpha(alpha) {
   map.getLayers().forEach(function(layer) {
@@ -144,6 +162,8 @@ function setStyle(colorStep, saturation, value, outlinealpha = 1) {
 
 $.exposed = {
   map: map,
+  clickSelect: clickSelect,
+  hoverSelect: hoverSelect,
   setAlpha: setAlpha,
   setStyle: setStyle
 };

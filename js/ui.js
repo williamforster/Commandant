@@ -17,6 +17,11 @@ const dayString = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const monthString = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
         "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+export function deleteSelected(obj) {
+    console.log($.exposed['clickSelect'].getFeatures());
+    console.log($.exposed['hoverSelect'].getFeatures());
+};
+
 export function panToExtentOfData(map, rows) {
     var extent = getExtent(rows);
     var center = [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
@@ -35,6 +40,10 @@ export function panToExtentOfData(map, rows) {
  * @param {Collection} hoverSelected: ol/Collection of selected features
  */
 export function updateUi(map, overlay, documentElement, clickSelected, hoverSelected) {
+    //only update when right click menu not showing
+    var ctxDivs = document.getElementsByClassName("ol-ctx-menu-container");
+    if (ctxDivs.length > 0 && ctxDivs[0].className.indexOf("ol-ctx-menu-hidden") < 0) { return; }
+
     var feature = hoverSelected.item(0);
 
     updateShownPathLayer(map, feature, clickSelected.item(0));
