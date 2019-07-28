@@ -205,6 +205,30 @@ function getPathBetweenPoints(features, feature1, feature2) {
 }
 
 /**
+ * Given a journey and 2 features, get only the features between the 2 features (inclusive).
+ * @param {array(Feature)} features array of features with 'time' property
+ * @param {ol/Feature} feature1 a feature, could be before, after or equal to feature2
+ * @param {ol/Feature} feature2 another feature
+ * @return {Feature} a linestring feature
+ */
+export function getFeaturesBetweenPoints(features, feature1, feature2) {
+    var ret = [];
+    var t1 = feature1.getProperties()['time'];
+    var t2 = feature2.getProperties()['time'];
+    if (t1 == undefined || t2 == undefined) { return ret; }
+    for (var f of features) {
+        var thisTime = f.getProperties()['time'];
+        if (thisTime != undefined) {
+            if ((thisTime >= t1 && thisTime <= t2) || 
+                (thisTime >= t2 && thisTime <= t1)) { 
+                    ret.push(f); 
+            }
+        }
+    }
+    return ret;
+}
+
+/**
  * @return The VectorSource that contains feature in param (or 'undefined')
  * @param {Map} map The map object
  * @param {Feature} feature A feature

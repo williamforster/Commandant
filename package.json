@@ -4,7 +4,8 @@
   "description": "Viewing geodata on a map",
   "main": "js/main.js",
   "scripts": {
-    "build": "browserify -g [ babelify --presets [ \"@babel/preset-env\" ] ] js/main.js > bundle.js"
+    "build": "browserify -g [ babelify --presets [ \"@babel/preset-env\" ] ] js/main.js > bundle.js",
+    "test": "browserify -g [ babelify --presets [ \"@babel/preset-env\" ] ] test/test.js > test/testbundle.js"
   },
   "dependencies": {
     "ol": "^5.1.3",
