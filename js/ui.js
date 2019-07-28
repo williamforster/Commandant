@@ -1,10 +1,7 @@
 import Feature from 'ol/Feature.js'
 import Map from 'ol/Map.js'
-import GeoJSON from 'ol/format/GeoJSON.js';
 import LineString from 'ol/geom/LineString.js';
-import Select from 'ol/interaction/Select.js';
 import VectorLayer from 'ol/layer/Vector.js';
-import { Layer } from 'ol/layer';
 import { Style, Stroke } from 'ol/style';
 import VectorSource from 'ol/source/Vector';
 import {getExtent, sortDatetime} from './process_data';
@@ -18,8 +15,14 @@ const monthString = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
         "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export function deleteSelected(obj) {
-    console.log($.exposed['clickSelect'].getFeatures());
-    console.log($.exposed['hoverSelect'].getFeatures());
+    var feature1 = $.exposed['clickSelect'].getFeatures().item(0);
+    var feature2 = $.exposed['hoverSelect'].getFeatures().item(0);
+
+    if (feature1 != undefined) {
+        if (feature2 != undefined && inSameLayer($.exposed['map'], feature1, feature2)) {
+            console.log(feature1.getProperties()['euid']);
+        }
+    }
 };
 
 export function panToExtentOfData(map, rows) {
@@ -40,10 +43,6 @@ export function panToExtentOfData(map, rows) {
  * @param {Collection} hoverSelected: ol/Collection of selected features
  */
 export function updateUi(map, overlay, documentElement, clickSelected, hoverSelected) {
-    //only update when right click menu not showing
-    var ctxDivs = document.getElementsByClassName("ol-ctx-menu-container");
-    if (ctxDivs.length > 0 && ctxDivs[0].className.indexOf("ol-ctx-menu-hidden") < 0) { return; }
-
     var feature = hoverSelected.item(0);
 
     updateShownPathLayer(map, feature, clickSelected.item(0));

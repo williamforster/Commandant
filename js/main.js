@@ -75,6 +75,13 @@ var contextmenu = new ContextMenu({
     '-' // this is a separator
   ]
 });
+/** Only update selection when right click menu is not open */
+contextmenu.on('open', function(evt){
+  $.exposed['hoverSelect'].setActive(false);
+});
+contextmenu.on('close', function(evt){
+  $.exposed['hoverSelect'].setActive(true);
+});
 map.addControl(contextmenu);
 
 // Check if mouse is over a dot and show/hide popup depending

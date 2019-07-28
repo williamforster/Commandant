@@ -20,4 +20,5 @@ QUnit.test( "ui.getFeaturesBetweenPoints", function( assert ) {
     assert.ok(ans[0] === featArray[1]);
     assert.ok(ans[1] === featArray[2]);
     assert.ok(ans[2] === featArray[3]);
+    assert.notOk(ans.includes(featArray[0]));
 });

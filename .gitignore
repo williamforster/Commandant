@@ -2,4 +2,5 @@ node_modules
 bundle.js
 credentials.php
 package-lock.json
+test/testbundle.js
 .DS_Store
