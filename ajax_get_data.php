@@ -1,12 +1,11 @@
 <?php
     include 'db_connect.php';
+    include_once 'constants.php';
     $DB_TABLE_NAME = 'glutton_reading';
     
     // Get the data from the database
-    // $stmt = $db->prepare("SELECT * FROM glutton_reading WHERE id=? AND name=?");
-    // $stmt->execute(array($id, $name));
     $stmt = $pdo->prepare(
-            'SELECT `dot_euid`,`time`,`longtitude`,`latitude`,`fill`,`signal_strength`' . 
+            'SELECT ' . $COLUMN_NAMES .
             ' FROM ' . $DB_TABLE_NAME . ' ORDER BY `time` DESC LIMIT 5000');
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -16,5 +15,6 @@
         echo implode(',', $row) . "\n";
     }
 
+    $stmt->closeCursor();
     $pdo = null; // disconnect
 ?>
