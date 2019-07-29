@@ -6,6 +6,7 @@ import { Style, Stroke } from 'ol/style';
 import VectorSource from 'ol/source/Vector';
 import {getExtent, sortDatetime} from './process_data';
 import {ajaxDeletePoints} from './get_geodata';
+import {downloadAndAddDataPoints} from './main';
 
 // The name that identifies the vector layer showing a path between 2 selected points
 const PATH_LAYER_NAME = 'showPathLayer';
@@ -18,27 +19,32 @@ const monthString = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
 export function deleteSelected(obj) {
     var feature1 = $.exposed['clickSelect'].getFeatures().item(0);
     var feature2 = $.exposed['hoverSelect'].getFeatures().item(0);
-    console.log(feature2);
     if (feature1 != undefined) {
         var euid = feature1.getProperties()['euid'];
         var time1 = feature1.getProperties()['time'];
+        var time2 = time1;
 
         // Time range
         if (feature2 != undefined && inSameLayer($.exposed['map'], feature1, feature2)) {
-            var time2 = feature2.getProperties()['time'];
+            time2 = feature2.getProperties()['time'];
             if (time2 < time1) { 
-                var temp = time1;
+                var temp = time2;
                 time2 = time1;
                 time1 = temp;
             }
-            ajaxDeletePoints(euid, time1, time2).then(function(response) {
-                console.log('Delete data: ' + response);
-            });
-        } else {
-            ajaxDeletePoints(euid, time1, time1).then(function(response) {
-                console.log('Delete data: ' + response);
-            });
         }
+        ajaxDeletePoints(euid, time1, time2).then(function(response) {
+            console.log(response);
+            // clear the map
+            while ($.exposed['map'].getLayers().getLength() > 1) {
+                $.exposed['map'].getLayers().removeAt(1);
+            }
+            $.exposed['clickSelect'].getFeatures().clear();
+            $.exposed['hoverSelect'].getFeatures().clear();
+            // re-load the map points
+            downloadAndAddDataPoints($.exposed['map'], false);
+            initializeShowPathLayer($.exposed['map']);
+        });
     }
 };
 
@@ -172,7 +178,8 @@ function initializeShowPathLayer(map) {
         }),
         updateWhileAnimating: true,
         updateWhileInteracting: true,
-        selectable: false
+        selectable: false,
+        zIndex: 5
     });
     map.addLayer(shownPathLayer);
     map.getLayers().set(PATH_LAYER_NAME, shownPathLayer);

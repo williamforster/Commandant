@@ -15,6 +15,21 @@ import {addColumnsToData, addJourneysToMap, sortDataIntoDays} from './process_da
 import {deleteSelected, panToExtentOfData, updateUi} from './ui';
 import * as constants from './constants'
 
+/**
+ * Do the ajax query and put the data on the map
+ * @param {ol/Map} map the map
+ * @param {bool} pan whether to pan to the data
+ */
+export function downloadAndAddDataPoints(map, pan=true) {
+  getPoints().then(function(rows) {
+    rows = addColumnsToData(rows);
+    console.log(rows);
+    if (pan) { panToExtentOfData(map, rows); }
+    var days = sortDataIntoDays(rows);
+    var geojsons = addJourneysToMap(map, days);
+  });
+}
+
 // Use the OpenStreetMap database
 var raster = new TileLayer({
   source: new OSM()
@@ -102,16 +117,8 @@ map.on('pointermove', function(evt) {
 $(document).ready(function() {
   // Add hidden class to right click menu, so behaviour is correct
   $(".ol-ctx-menu-container").addClass("ol-ctx-menu-hidden");
-
-  // Download data points
-  getPoints().then(function(rows) {
-    rows = addColumnsToData(rows);
-    console.log(rows);
-    panToExtentOfData(map, rows);
-    var days = sortDataIntoDays(rows);
-    var geojsons = addJourneysToMap(map, days);
-  });
-})
+  downloadAndAddDataPoints(map);
+});
 
 
 function setAlpha(alpha) {
