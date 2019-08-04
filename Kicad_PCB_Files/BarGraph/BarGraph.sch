@@ -75,7 +75,7 @@ U 1 1 5CB26FC5
 P 3150 3950
 F 0 "R1" V 2943 3950 50  0000 C CNN
 F 1 "10k" V 3034 3950 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal" V 3080 3950 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 3080 3950 50  0001 C CNN
 F 3 "~" H 3150 3950 50  0001 C CNN
 	1    3150 3950
 	0    1    1    0   
@@ -275,10 +275,10 @@ Wire Notes Line
 Text Notes 3200 4800 0    50   ~ 0
 Optional Divider for Reference High
 $Comp
-L lm3914n:LM3914N U?
+L lm3914n:LM3914N U2
 U 1 1 5D46F6ED
 P 6500 4100
-F 0 "U?" H 6500 5015 50  0000 C CNN
+F 0 "U2" H 6500 5015 50  0000 C CNN
 F 1 "LM3914N" H 6500 4924 50  0000 C CNN
 F 2 "Package_DIP:DIP-18_W7.62mm_Socket_LongPads" H 6500 3900 50  0001 C CNN
 F 3 "" H 6500 3900 50  0001 C CNN
@@ -332,10 +332,10 @@ Wire Wire Line
 Wire Wire Line
 	5950 3200 5950 3500
 $Comp
-L Connector:USB_B J?
+L Connector:USB_B J1
 U 1 1 5D489EC6
 P 2600 3950
-F 0 "J?" H 2657 4417 50  0000 C CNN
+F 0 "J1" H 2657 4417 50  0000 C CNN
 F 1 "USB_B" H 2657 4326 50  0000 C CNN
 F 2 "SmartGluttonV1:USB_B_Molex_USB-67068-xx1x_StraightTab_Horizontal" H 2750 3900 50  0001 C CNN
 F 3 " ~" H 2750 3900 50  0001 C CNN
@@ -360,13 +360,11 @@ Wire Wire Line
 	8550 3650 7050 3650
 Wire Wire Line
 	7050 3500 8550 3500
-Text GLabel 5950 4700 0    50   Input ~ 0
-USB5V
 $Comp
-L Connector:TestPoint TP?
+L Connector:TestPoint TP2
 U 1 1 5D467D46
 P 5400 3600
-F 0 "TP?" H 5458 3718 50  0000 L CNN
+F 0 "TP2" H 5458 3718 50  0000 L CNN
 F 1 "TestPoint" H 5458 3627 50  0000 L CNN
 F 2 "TestPoint:TestPoint_Pad_2.5x2.5mm" H 5600 3600 50  0001 C CNN
 F 3 "~" H 5600 3600 50  0001 C CNN
@@ -376,4 +374,50 @@ $EndComp
 Connection ~ 5400 3600
 Wire Wire Line
 	5400 3600 5550 3600
+Text GLabel 5950 4700 0    50   Input ~ 0
+USB5V
+$Comp
+L Mechanical:MountingHole H1
+U 1 1 5D46FB90
+P 3950 2450
+F 0 "H1" H 4050 2496 50  0000 L CNN
+F 1 "MountingHole" H 4050 2405 50  0000 L CNN
+F 2 "MountingHole:MountingHole_4mm_Pad" H 3950 2450 50  0001 C CNN
+F 3 "~" H 3950 2450 50  0001 C CNN
+	1    3950 2450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H3
+U 1 1 5D4716A5
+P 4200 2450
+F 0 "H3" H 4300 2496 50  0000 L CNN
+F 1 "MountingHole" H 4300 2405 50  0000 L CNN
+F 2 "MountingHole:MountingHole_4mm_Pad" H 4200 2450 50  0001 C CNN
+F 3 "~" H 4200 2450 50  0001 C CNN
+	1    4200 2450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H2
+U 1 1 5D4718D9
+P 3950 2700
+F 0 "H2" H 4050 2746 50  0000 L CNN
+F 1 "MountingHole" H 4050 2655 50  0000 L CNN
+F 2 "MountingHole:MountingHole_4mm_Pad" H 3950 2700 50  0001 C CNN
+F 3 "~" H 3950 2700 50  0001 C CNN
+	1    3950 2700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H4
+U 1 1 5D471C37
+P 4200 2700
+F 0 "H4" H 4300 2746 50  0000 L CNN
+F 1 "MountingHole" H 4300 2655 50  0000 L CNN
+F 2 "MountingHole:MountingHole_4mm_Pad" H 4200 2700 50  0001 C CNN
+F 3 "~" H 4200 2700 50  0001 C CNN
+	1    4200 2700
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
