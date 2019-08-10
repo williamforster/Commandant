@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name lm3914n)(type Legacy)(uri ${KIPRJMOD}/lm3914n.lib)(options "")(descr ""))
+  (lib (name BarGraph-cache)(type Legacy)(uri ${KIPRJMOD}/BarGraph-cache.lib)(options "")(descr ""))
+)
