@@ -8,8 +8,9 @@ export const LONGTITUDE_COL = 2;
 export const LATITUDE_COL = 3;
 export const FILL_COL = 4;
 export const SIGNAL_COL = 5;
+export const SNR_COL = 6;
 // columns that will be added after
 // How much bin is filled in that particular area. Density = (this fill - last fill)/distance
-export const DEBRIS_DENSITY_COL = 6;
-export const PREVIOUS_COORDS = 7;
-export const NEXT_COORDS = 8;
+export const DEBRIS_DENSITY_COL = 7;
+export const PREVIOUS_COORDS = 8;
+export const NEXT_COORDS = 9;

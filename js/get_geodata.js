@@ -17,7 +17,7 @@ export function getPoints() {
 
             for (var row of rowsin) {
                 var parts = row.split(',');
-                if (parts.length <= constants.SIGNAL_COL) { 
+                if (parts.length <= constants.SNR_COL) { 
                   console.log("Bad data returned from server:" + row)
                   continue;
                 }
@@ -30,6 +30,10 @@ export function getPoints() {
                         parseFloat(parts[constants.LATITUDE_COL]);
                 parts[constants.FILL_COL] = 
                         parseFloat(parts[constants.FILL_COL]);
+                parts[constants.SIGNAL_COL] = 
+                        parseInt(parts[constants.SIGNAL_COL]);
+                parts[constants.SNR_COL] = 
+                        parseInt(parts[constants.SNR_COL]);
                 rowsout.push(parts);
             }
             resolve(rowsout);

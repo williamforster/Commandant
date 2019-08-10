@@ -1,9 +1,11 @@
+import Feature from 'ol/Feature.js';
+import Point from 'ol/geom/Point.js';
 import {  Vector as VectorLayer } from 'ol/layer.js';
 import {  Vector as VectorSource } from 'ol/source.js';
-import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
+import { Circle as CircleStyle, Fill, Icon, Stroke, Style } from 'ol/style.js';
 import GeoJSON from 'ol/format/GeoJSON.js';
 import { isArray } from 'util';
-import * as constants from './constants'
+import * as constants from './constants';
 var colorConvert = require('color-convert');
 
 // Dot and line HSV
@@ -16,6 +18,7 @@ const DOT_SIZE = 4; // px radius
 const DOT_OUTLINE_COLOR = 'rgba(0,0,0,0.4)';
 const DOT_OUTLINE_WIDTH = 2;
 const STROKE_WIDTH = 8;
+const MARKER_ICON_PATH = "./img/icon-marker.png";
 
 /**
  * Using the data already in the columns, generate extra data like debris density,
@@ -133,10 +136,8 @@ export function addJourneysToMap(map, buckets) {
         addGeojsonToMap(map, geojsonObject, 'rgba(' + c[0] + ',' + c[1] + 
                 ',' + c[2] + ',' + ALPHA + ')', false   );
         ret.push(geojsonObject);
-    //}
 
-    // Add dots to map
-    //for (var i = 0; i < buckets.length; ++i) {
+        // Add dots to map
         if (buckets[i].length === 0) { continue; }
         // Make a geoJSON object
         var geojsonObject = {
@@ -148,6 +149,8 @@ export function addJourneysToMap(map, buckets) {
         }
         addGeojsonToMap(map, geojsonObject, 'rgba(0,0,0,1)');
         ret.push(geojsonObject);
+
+        
     }
     return ret;
 }
@@ -204,6 +207,47 @@ function addGeojsonToMap(map, geojsonObject, color, selectable = true) {
         })
     });
     map.addLayer(vectorLayer);
+}
+
+/** Add an icon for most recent location to the map
+ * @param {ol/Map} map the map
+ * @param {array[array]} rows rows of data as laid out in constants.js
+ */
+export function addMostRecentToMap(map, rows) {
+    if (rows.length == 0) { return; }
+    // Sort by euid then date
+    rows.sort(function(a, b) { 
+        if (a[constants.EUID_COL] === b[constants.EUID_COL]) { 
+            return sortDatetime(a[constants.DATETIME_COL] < b[constants.DATETIME_COL]);
+        }
+        return a[constants.EUID_COL] > b[constants.EUID_COL];
+    });
+    var lastEuid = undefined;
+    for (var row of rows) {
+        if (row[constants.EUID_COL] === lastEuid) { continue; }
+        else {
+            lastEuid = row[constants.EUID_COL];
+            // add last position marker to map
+            var iconFeature = new Feature({
+                geometry: new Point([row[constants.LONGTITUDE_COL], row[constants.LATITUDE_COL]])
+            });
+            console.log(iconFeature);
+            var iconStyle = new Style({
+                image: new Icon(/** @type {module:ol/style/Icon~Options} */ ({
+                anchor: [0.5, 46],
+                anchorXUnits: 'fraction',
+                anchorYUnits: 'pixels',
+                src: MARKER_ICON_PATH
+                }))
+            });
+            iconFeature.setStyle(iconStyle);
+            map.addLayer(new VectorLayer({
+                source: new VectorSource({
+                    features: [iconFeature]
+                })
+            }));
+        }
+    }
 }
 
 /**

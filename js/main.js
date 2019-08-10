@@ -11,7 +11,7 @@ import ContextMenu from 'ol-contextmenu/dist/ol-contextmenu.js';
 import {hsv} from 'color-convert';
 
 import {getPoints} from './get_geodata';
-import {addColumnsToData, addJourneysToMap, sortDataIntoDays} from './process_data';
+import {addColumnsToData, addJourneysToMap, addMostRecentToMap, sortDataIntoDays} from './process_data';
 import {deleteSelected, panToExtentOfData, updateUi} from './ui';
 import * as constants from './constants'
 
@@ -23,10 +23,11 @@ import * as constants from './constants'
 export function downloadAndAddDataPoints(map, pan=true) {
   getPoints().then(function(rows) {
     rows = addColumnsToData(rows);
-    console.log(rows);
+    //console.log(rows);
     if (pan) { panToExtentOfData(map, rows); }
     var days = sortDataIntoDays(rows);
     var geojsons = addJourneysToMap(map, days);
+    addMostRecentToMap(map, rows);
   });
 }
 
