@@ -1,42 +1,47 @@
-"Source:","C:\Users\User1\Documents\SmartGluttonV1\SmartGluttonV1.sch"
-"Date:","21/07/2019 02:51:09"
-"Tool:","Eeschema (5.1.0)-1"
-"Component Count:","37"
-"Ref","Value","Footprint","Datasheet","Manufacturer","Vendor"
-"C1","100nF","Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","",""
-"C2","47pF","Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","","ETSG"
-"C3","47pF","Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","","ETSG"
-"C4","100nF","Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","","ETSG"
-"C5","100nF","Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","","ETSG"
-"C6","4.7uF","Capacitor_THT:CP_Radial_D5.0mm_P2.50mm","~","","ETSG"
-"D5","LED","LED_THT:LED_D3.0mm","~","",""
-"D6","LED","LED_THT:LED_D3.0mm","~","",""
-"FB1","47@100MHz","Inductor_SMD:L_0603_1608Metric_Pad1.05x0.95mm_HandSolder","~","","rs-online https://au.rs-online.com/web/p/wire-wound-surface-mount-inductors/7242989/"
-"GPS_RX1","LED","LED_THT:LED_D3.0mm","~","",""
-"J1","mDot breakout","Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical","~","",""
-"J2","FLOW CONTROL","Connector_PinHeader_2.54mm:PinHeader_1x10_P2.54mm_Vertical","~","",""
-"J3","mDot pin11-20 brkout","Connector_PinHeader_2.54mm:PinHeader_1x10_P2.54mm_Vertical","~","",""
-"J4","mDot pin1-10 brkout","Connector_PinHeader_2.54mm:PinHeader_1x10_P2.54mm_Vertical","~","",""
-"J5","USB_A","SmartGluttonV1:USB_A_FCI_87583_Horizontal"," ~","","ETSG"
-"J6","USB_B","SmartGluttonV1:USB_B_Molex_USB-67068-xx1x_StraightTab_Horizontal"," ~","","https://au.rs-online.com/web/p/type-b-usb-connectors/8006860/"
-"J7","GPS Connector","SmartGluttonV1:Adafruit_GPS_Breakout","~","",""
-"J8","Ultrasonic Conn","Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical","~","",""
-"LORA_SEND1","LED","LED_THT:LED_D3.0mm","~","",""
-"MCU1","mDot","SmartGluttonV1:mdot","","","2mm pitch headers 10x1 10x1 8x1"
-"NETWORK_JOIN1","LED","LED_THT:LED_D3.0mm","~","",""
-"R1","27","Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","","ETSG"
-"R2","27","Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","","ETSG"
-"R3","110","Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","","ETSG"
-"R4","110","Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","","ETSG"
-"R5","110","Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","","ETSG"
-"R6","110","Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","","ETSG"
-"R7","110","Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","","ETSG"
-"R8","110","Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","","ETSG"
-"R9","0R OPT","Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","","ETSG"
-"R10","0R OPT","Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder","~","","ETSG"
-"SIGNAL_STR1","LED","LED_THT:LED_D3.0mm","~","",""
-"SW1","UART_PWR","Package_DIP:DIP-4_W7.62mm_LongPads","~","","ETSG"
-"SW2","Reset","Button_Switch_THT:SW_PUSH_6mm","~","","ETSG 6x6x4.3"
-"U1","FT231XS","Package_SO:SSOP-20_3.9x8.7mm_P0.635mm","http://www.ftdichip.com/Products/ICs/FT231X.html","","https://au.rs-online.com/web/p/universal-asynchronous-receivers-transmitters/7570032/"
-"U2","MCP1700-3002E_TO92","Package_TO_SOT_THT:TO-92_HandSolder","http://ww1.microchip.com/downloads/en/DeviceDoc/20001826D.pdf","","ETSG"
-"U3","74LS04","Package_DIP:DIP-14_W7.62mm_LongPads","http://www.ti.com/lit/gpn/sn74LS04","","ETSG"
+Source:,C:\Users\User1\Documents\SmartGluttonV1\SmartGluttonV1.sch,,,,,
+Date:,12/08/2019 11:46,,,,,
+Tool:,Eeschema (5.1.0)-1,,,,,
+Component Count:,42,,,,,
+Ref,Value,Footprint,Datasheet,Manufacturer,Vendor,check
+C1,100nF,Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+C2,47pF,Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+C3,47pF,Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+C4,100nF,Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+C5,100nF,Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,1
+C6,4.7uF,Capacitor_THT:CP_Radial_D5.0mm_P2.50mm,~,,ETSG,y
+C7,10n,Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,1
+D1,LED,LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,8
+D2,LED,LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+D5,LED,LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,,y
+D6,LED,LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,,y
+FB1,47@100MHz,Inductor_SMD:L_0603_1608Metric_Pad1.05x0.95mm_HandSolder,~,,rs-online https://au.rs-online.com/web/p/wire-wound-surface-mount-inductors/7242989/,y
+GPS_RX1,LED,LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,,y
+H1,MountingHole,MountingHole:MountingHole_4mm,~,,,y
+H2,MountingHole,MountingHole:MountingHole_4mm,~,,,y
+H3,MountingHole,MountingHole:MountingHole_4mm,~,,,y
+H4,MountingHole,MountingHole:MountingHole_4mm,~,,,y
+J5,USB_A,SmartGluttonV1:USB_A_FCI_87583_Horizontal, ~,,ETSG,1
+J6,USB_B,SmartGluttonV1:USB_B_Molex_USB-67068-xx1x_StraightTab_Horizontal, ~,,https://au.rs-online.com/web/p/type-b-usb-connectors/8006860/,y
+J7,GPS Connector,SmartGluttonV1:Adafruit_GPS_Breakout,~,,,1
+J8,Ultrasonic Conn,Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical,~,,,y
+LORA_SEND1,LED,LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,,y
+MCU1,mDot,SmartGluttonV1:mdot,,,2mm pitch headers 10x1 10x1 8x1,y
+NETWORK_JOIN1,LED,LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,,y
+R1,27,Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+R2,27,Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+R3,110,Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,2
+R4,110,Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+R5,110,Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+R6,110,Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+R7,110,Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+R8,110,Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+R9,0R OPT,Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+R10,0R OPT,Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+R11,270R,Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,2
+R12,270R,Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,ETSG,y
+SIGNAL_STR1,LED,LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder,~,,,y
+SW1,SW_DIP_x02,Package_DIP:DIP-4_W8.89mm_SMDSocket_LongPads,~,,ETSG,1
+SW2,Reset,Button_Switch_THT:SW_PUSH_6mm,~,,ETSG 6x6x4.3,y
+U1,FT231XS,SmartGluttonV1:SSOP-20_3.9x8.7mm_P0.635mm_HandSolder,http://www.ftdichip.com/Products/ICs/FT231X.html,,https://au.rs-online.com/web/p/universal-asynchronous-receivers-transmitters/7570032/,2?
+U2,MCP1700-3002E_TO92,Package_TO_SOT_THT:TO-92_HandSolder,http://ww1.microchip.com/downloads/en/DeviceDoc/20001826D.pdf,,ETSG,1
+U3,74LS04,Package_DIP:DIP-14_W7.62mm_LongPads,http://www.ti.com/lit/gpn/sn74LS04,,ETSG,y
