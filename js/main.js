@@ -10,6 +10,7 @@ import Overlay from 'ol/Overlay.js';
 import ContextMenu from 'ol-contextmenu/dist/ol-contextmenu.js';
 import {hsv} from 'color-convert';
 
+import {AddCheckboxControls} from './checkbox';
 import {getPoints} from './get_geodata';
 import {addColumnsToData, addJourneysToMap, addMostRecentToMap, sortDataIntoDays} from './process_data';
 import {deleteSelected, panToExtentOfData, updateUi} from './ui';
@@ -23,7 +24,7 @@ import * as constants from './constants'
 export function downloadAndAddDataPoints(map, pan=true) {
   getPoints().then(function(rows) {
     rows = addColumnsToData(rows);
-    //console.log(rows);
+    console.log(rows);
     if (pan) { panToExtentOfData(map, rows); }
     var days = sortDataIntoDays(rows);
     var geojsons = addJourneysToMap(map, days);
@@ -119,6 +120,7 @@ $(document).ready(function() {
   // Add hidden class to right click menu, so behaviour is correct
   $(".ol-ctx-menu-container").addClass("ol-ctx-menu-hidden");
   downloadAndAddDataPoints(map);
+  AddCheckboxControls(map);
 });
 
 
