@@ -204,7 +204,8 @@ function addGeojsonToMap(map, geojsonObject, color, selectable = true) {
                   width: DOT_OUTLINE_WIDTH
               })
             })
-        })
+        }),
+        name: 'tracking' // show/hide layers identifier
     });
     map.addLayer(vectorLayer);
 }
@@ -234,9 +235,9 @@ export function addMostRecentToMap(map, rows) {
             console.log(iconFeature);
             var iconStyle = new Style({
                 image: new Icon(/** @type {module:ol/style/Icon~Options} */ ({
-                anchor: [0.5, 46],
+                anchor: [0.5, 1.05],
                 anchorXUnits: 'fraction',
-                anchorYUnits: 'pixels',
+                anchorYUnits: 'fraction',
                 src: MARKER_ICON_PATH
                 }))
             });
@@ -244,7 +245,8 @@ export function addMostRecentToMap(map, rows) {
             map.addLayer(new VectorLayer({
                 source: new VectorSource({
                     features: [iconFeature]
-                })
+                }),
+                name: 'tracking'
             }));
         }
     }
