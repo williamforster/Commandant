@@ -1,8 +1,5 @@
 import Map from 'ol/Map.js';
-import View from 'ol/View.js';
-import {defaults as defaultControls, Control} from 'ol/control.js';
-import TileLayer from 'ol/layer/Tile.js';
-import OSM from 'ol/source/OSM.js';
+import {Control} from 'ol/control.js';
 
 /**
  * Add a checkbox control that shows/hides layers to the map
