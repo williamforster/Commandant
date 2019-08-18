@@ -269,6 +269,8 @@ function getGeoJSONPoint(row) {
                 euid: row[constants.EUID_COL],
                 time: row[constants.DATETIME_COL],
                 fill: row[constants.FILL_COL],
+                rssi: row[constants.SIGNAL_COL],
+                snr: row[constants.SNR_COL],
                 debrisDensity: row[constants.DEBRIS_DENSITY_COL]
             }
         };

@@ -73,6 +73,8 @@ export function updateUi(map, overlay, documentElement, clickSelected, hoverSele
     if (feature && feature.getProperties()['type'] && feature.getProperties()['type']=='Point') {
         overlay.setPosition(feature.getGeometry()['flatCoordinates']);
         var d = feature.getProperties()['time'];
+        var rssi = feature.getProperties()['rssi'];
+        var snr = feature.getProperties()['snr'];
         var timeString = pad(d.getHours(), 2) + ':' + pad(d.getMinutes(), 2) + ':' + pad(d.getSeconds(), 2);
         
         // Work out time diff to selected if they are on same vector layer (same journey)
@@ -84,7 +86,8 @@ export function updateUi(map, overlay, documentElement, clickSelected, hoverSele
             timeString = minutesDifference.toString() + " min<br>" + timeString;
         }
         documentElement.innerHTML = timeString+ '<br>' + dayString[d.getDay()] + " " +
-        d.getDate() + " " + monthString[d.getMonth()]
+                d.getDate() + " " + monthString[d.getMonth()] + '<br>rssi: ' + 
+                rssi + ' snr: ' + snr;
     } else {
         overlay.setPosition(undefined);
     }

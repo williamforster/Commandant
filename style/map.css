@@ -23,7 +23,7 @@
     border: 1px solid #cccccc;
     bottom: 12px;
     left: -50px;
-    min-width: 85px;
+    min-width: 115px;
 }
 #map-datapoint-popup:after, #map-datapoint-popup:before {
     top: 100%;
