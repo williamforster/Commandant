@@ -1,34 +1,46 @@
-import {color, asArray} from 'ol/color.js'
-import Map from 'ol/Map.js';
-import View from 'ol/View.js';
-import {click, pointerMove} from 'ol/events/condition.js';
-import Select from 'ol/interaction/Select.js'
-import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer.js';
-import { OSM, Vector as VectorSource } from 'ol/source.js';
-import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style.js';
-import Overlay from 'ol/Overlay.js';
-import ContextMenu from 'ol-contextmenu/dist/ol-contextmenu.js';
-import {hsv} from 'color-convert';
+import { color, asArray } from "ol/color.js";
+import Map from "ol/Map.js";
+import View from "ol/View.js";
+import { click, pointerMove } from "ol/events/condition.js";
+import Select from "ol/interaction/Select.js";
+import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer.js";
+import { OSM, Vector as VectorSource } from "ol/source.js";
+import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style.js";
+import Overlay from "ol/Overlay.js";
+import ContextMenu from "ol-contextmenu/dist/ol-contextmenu.js";
+import { hsv } from "color-convert";
 
-import {AddCheckboxControls} from './checkbox';
-import {getPoints} from './get_geodata';
-import {addColumnsToData, addJourneysToMap, addMostRecentToMap, sortDataIntoDays} from './process_data';
-import {deleteSelected, panToExtentOfData, updateUi} from './ui';
-import * as constants from './constants'
+import { AddCheckboxControls } from "./checkbox";
+import { getPointsRange } from "./get_geodata";
+import {
+  addColumnsToData,
+  addJourneysToMap,
+  addMostRecentToMap,
+  sortDataIntoDays
+} from "./process_data";
+import { deleteSelected, panToExtentOfData, updateUi } from "./ui";
+import * as constants from "./constants";
+
+const LOWER_BOUND_DAYS_AGO = 7;
 
 /**
  * Do the ajax query and put the data on the map
  * @param {ol/Map} map the map
+ * @param {Date} time1 the earlier time to fetch data from
+ * @param {Date} time2 the later time of range of data
  * @param {bool} pan whether to pan to the data
  */
-export function downloadAndAddDataPoints(map, pan=true) {
-  getPoints().then(function(rows) {
+export function downloadAndAddDataPoints(map, time1, time2, pan = true) {
+  getPointsRange(time1, time2).then(function(rows) {
     rows = addColumnsToData(rows);
     console.log(rows);
-    if (pan) { panToExtentOfData(map, rows); }
+    if (pan) {
+      panToExtentOfData(map, rows);
+    }
     var days = sortDataIntoDays(rows);
     var geojsons = addJourneysToMap(map, days);
     addMostRecentToMap(map, rows);
+    $.exposed["rows"] = rows;
   });
 }
 
@@ -41,7 +53,7 @@ var raster = new TileLayer({
  * Create an overlay to anchor the datapoint-popup to the map.
  */
 var mapDatapointPopupOverlay = new Overlay({
-  element: document.getElementById('map-datapoint-popup'),
+  element: document.getElementById("map-datapoint-popup"),
   autoPan: false
 });
 
@@ -49,12 +61,12 @@ var mapDatapointPopupOverlay = new Overlay({
 var map = new Map({
   layers: [raster], //, vector],
   overlays: [mapDatapointPopupOverlay],
-  target: 'map',
+  target: "map",
   view: new View({
     projection: constants.COORDINATE_REFERENCE_SYSTEM,
     center: constants.MAP_START_LOCATION,
     zoom: 17
-  }),
+  })
 });
 
 /** Click button selects a point */
@@ -63,7 +75,9 @@ var clickSelect = new Select({
   hitTolerance: 2,
   // Do not select ui layers
   // selectable is not an official property so may not be in all layers
-  layers: function(layer) {return layer.getProperties()['selectable'] != false}
+  layers: function(layer) {
+    return layer.getProperties()["selectable"] != false;
+  }
 });
 /** Hovering selects a point  */
 var hoverSelect = new Select({
@@ -71,11 +85,11 @@ var hoverSelect = new Select({
   hitTolerance: 2,
   // Do not select ui layers
   // selectable is not an official property so may not be in all layers
-  layers: function(layer) {return layer.getProperties()['selectable'] != false}
+  layers: function(layer) {
+    return layer.getProperties()["selectable"] != false;
+  }
 });
-hoverSelect.on('select', function(evt){
-
-});
+hoverSelect.on("select", function(evt) {});
 map.addInteraction(clickSelect);
 map.addInteraction(hoverSelect);
 
@@ -85,31 +99,31 @@ var contextmenu = new ContextMenu({
   defaultItems: true, // defaultItems are (for now) Zoom In/Zoom Out
   items: [
     {
-      text: 'Delete',
-      classname: 'some-style-class',
+      text: "Delete",
+      classname: "some-style-class",
       callback: deleteSelected
     },
-    '-' // this is a separator
+    "-" // this is a separator
   ]
 });
 /** Only update selection when right click menu is not open */
-contextmenu.on('open', function(evt){
-  $.exposed['hoverSelect'].setActive(false);
+contextmenu.on("open", function(evt) {
+  $.exposed["hoverSelect"].setActive(false);
 });
-contextmenu.on('close', function(evt){
-  $.exposed['hoverSelect'].setActive(true);
+contextmenu.on("close", function(evt) {
+  $.exposed["hoverSelect"].setActive(true);
 });
 map.addControl(contextmenu);
 
 // Check if mouse is over a dot and show/hide popup depending
-map.on('pointermove', function(evt) {
+map.on("pointermove", function(evt) {
   if (evt.dragging) {
     return;
   }
   updateUi(
-    map, 
+    map,
     mapDatapointPopupOverlay,
-    document.getElementById('map-datapoint-popup-content'),
+    document.getElementById("map-datapoint-popup-content"),
     clickSelect.getFeatures(),
     hoverSelect.getFeatures()
   );
@@ -119,12 +133,42 @@ map.on('pointermove', function(evt) {
 $(document).ready(function() {
   // Add hidden class to right click menu, so behaviour is correct
   $(".ol-ctx-menu-container").addClass("ol-ctx-menu-hidden");
-  downloadAndAddDataPoints(map);
+
+  // Add the jquery slider
+  var thisMorning = new Date();
+  thisMorning.setSeconds(0);
+  thisMorning.setMinutes(0);
+  thisMorning.setHours(4);
+  var lowerBound = new Date();
+  lowerBound.setDate(lowerBound.getDate() - LOWER_BOUND_DAYS_AGO);
+  $("#slider").dateRangeSlider({
+    defaultValues: {
+      min: thisMorning,
+      max: new Date()
+    },
+    bounds: {
+      min: lowerBound,
+      max: new Date()
+    },
+    step: { minutes: 1 },
+    formatter: function(val) {
+      var d = val.getDate();
+      var mo = val.getMonth() + 1;
+      var y = val.getFullYear();
+      var h = ("0" + val.getHours()).slice(-2);
+      var mi = ("0" + val.getMinutes()).slice(-2);
+      return d + "-" + mo + "-" + y + " " + h + ":" + mi;
+    }
+  });
+  $("#slider").bind("userValuesChanged", function(e, data) {
+    console.log("changed min: " + data.values.min);
+  });
+
+  downloadAndAddDataPoints(map, thisMorning, new Date());
   AddCheckboxControls(map);
 });
 
-
-function setAlpha(alpha) {
+/*function setAlpha(alpha) {
   map.getLayers().forEach(function(layer) {
     if (layer instanceof VectorLayer) {
       var s = layer.getStyle();
@@ -175,12 +219,12 @@ function setStyle(colorStep, saturation, value, outlinealpha = 1) {
       }));
     }
   }
-}
+}*/
 
 $.exposed = {
   map: map,
   clickSelect: clickSelect,
-  hoverSelect: hoverSelect,
-  setAlpha: setAlpha,
-  setStyle: setStyle
+  hoverSelect: hoverSelect
+  //setAlpha: setAlpha,
+  //setStyle: setStyle
 };

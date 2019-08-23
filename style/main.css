@@ -1,5 +1,6 @@
 :root {
     --theme-col: #51247A;
+    --slider-height: 6em;
 }
 /* div with logout button */
 #topbar {
@@ -20,4 +21,12 @@
 #topbar img {
     max-width: 1em;
     margin: 0 0.4em;
+}
+
+/* Date range slider */
+#slider {
+    position: absolute;
+    bottom: 0.5em;
+    width: 93%;
+    margin-left: 16px;
 }

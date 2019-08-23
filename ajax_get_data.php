@@ -1,7 +1,6 @@
 <?php
     include 'db_connect.php';
     include_once 'constants.php';
-    $DB_TABLE_NAME = 'glutton_reading';
     
     // Get the data from the database
     $stmt = $pdo->prepare(

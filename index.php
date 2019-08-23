@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="style/main.css" type="text/css">
     <link rel="stylesheet" href="style/map.css" type="text/css">
     <link href="https://cdn.jsdelivr.net/npm/ol-contextmenu@latest/dist/ol-contextmenu.min.css" rel="stylesheet">
-    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="style/jquery-ui.css">
+    <link rel="stylesheet" href="style/iThing-min.css">
   </head>
   <body>
     <div id="topbar">
@@ -18,6 +18,11 @@
     <div id="map-datapoint-popup">
       <div id="map-datapoint-popup-content"></div>
     </div>
+    <div id="slider"></div>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/jQDateRangeSlider-withRuler-min.js"></script>
     <script src="./bundle.js"></script>
   </body>
 </html>
