@@ -6,7 +6,9 @@ import { Style, Stroke } from 'ol/style';
 import VectorSource from 'ol/source/Vector';
 import {getExtent, sortDatetime} from './process_data';
 import {ajaxDeletePoints} from './get_geodata';
+
 import {downloadAndAddDataPoints, refreshMap} from './main';
+import * as constants from './constants'
 
 // The name that identifies the vector layer showing a path between 2 selected points
 const PATH_LAYER_NAME = 'showPathLayer';
@@ -41,12 +43,24 @@ export function deleteSelected(obj) {
 };
 
 export function panToExtentOfData(map, rows) {
+    if(rows.length == 0) { return; }
     var extent = getExtent(rows);
     var center = [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
     var view = map.getView();
     var zoom = -PADDING + view.getZoomForResolution(view.getResolutionForExtent(extent));
     view.animate({zoom: zoom, center: center});
 };
+
+export function panToLatestData(map, rows) {
+    console.log(rows);
+    if (rows.length == 0) { return; }
+    rows.sort(function(a, b) {
+        return a[constants.DATETIME_COL] > b[constants.DATETIME_COL];
+    });
+    var center = [rows[0][constants.LONGTITUDE_COL], rows[0][constants.LATITUDE_COL]];
+    var view = map.getView();
+    view.animate({center: center});
+}
 
 /**
  * Show (or hide) a popup with the point info when the pointer moves

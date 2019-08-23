@@ -14,6 +14,7 @@ const LINE_VALUE = 85;
 const ALPHA = 1;
 const MAX_HUE = 360;
 const HUE_STEP = 212; // Increase hue by this for each new journey
+const HUE_START = 270;
 const DOT_SIZE = 4; // px radius
 const DOT_OUTLINE_COLOR = 'rgba(0,0,0,0.4)';
 const DOT_OUTLINE_WIDTH = 2;
@@ -132,7 +133,7 @@ export function addJourneysToMap(map, buckets) {
             features: []
         }
         geojsonObject['features'].push(getGeoJSONLineString(buckets[i]));
-        var c = colorConvert.hsv.rgb((i * HUE_STEP) % MAX_HUE, LINE_SATURATION, LINE_VALUE);
+        var c = colorConvert.hsv.rgb((HUE_START + i * HUE_STEP) % MAX_HUE, LINE_SATURATION, LINE_VALUE);
         addGeojsonToMap(map, geojsonObject, 'rgba(' + c[0] + ',' + c[1] + 
                 ',' + c[2] + ',' + ALPHA + ')', false   );
         ret.push(geojsonObject);
