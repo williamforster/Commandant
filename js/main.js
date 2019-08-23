@@ -18,7 +18,7 @@ import {
   addMostRecentToMap,
   sortDataIntoDays
 } from "./process_data";
-import { deleteSelected, panToExtentOfData, updateUi } from "./ui";
+import { deleteSelected, initializeShowPathLayer, panToExtentOfData, updateUi } from "./ui";
 import * as constants from "./constants";
 
 const LOWER_BOUND_DAYS_AGO = 7;
@@ -42,6 +42,23 @@ export function downloadAndAddDataPoints(map, time1, time2, pan = true) {
     addMostRecentToMap(map, rows);
     $.exposed["rows"] = rows;
   });
+}
+
+/**
+ * Clear the map and reload the points
+ */
+export function refreshMap() {
+  // clear the map
+  while ($.exposed['map'].getLayers().getLength() > 1) {
+      $.exposed['map'].getLayers().removeAt(1);
+  }
+  $.exposed['clickSelect'].getFeatures().clear();
+  $.exposed['hoverSelect'].getFeatures().clear();
+  var sliderRange = $("#slider").dateRangeSlider('values');
+  console.log(sliderRange);
+  // re-load the map points
+  downloadAndAddDataPoints($.exposed['map'], sliderRange['min'], sliderRange['max'], false);
+  initializeShowPathLayer($.exposed['map']);
 }
 
 // Use the OpenStreetMap database
@@ -160,9 +177,7 @@ $(document).ready(function() {
       return d + "-" + mo + "-" + y + " " + h + ":" + mi;
     }
   });
-  $("#slider").bind("userValuesChanged", function(e, data) {
-    console.log("changed min: " + data.values.min);
-  });
+  $("#slider").bind("userValuesChanged", refreshMap);
 
   downloadAndAddDataPoints(map, thisMorning, new Date());
   AddCheckboxControls(map);

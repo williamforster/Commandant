@@ -6,7 +6,7 @@ import { Style, Stroke } from 'ol/style';
 import VectorSource from 'ol/source/Vector';
 import {getExtent, sortDatetime} from './process_data';
 import {ajaxDeletePoints} from './get_geodata';
-import {downloadAndAddDataPoints} from './main';
+import {downloadAndAddDataPoints, refreshMap} from './main';
 
 // The name that identifies the vector layer showing a path between 2 selected points
 const PATH_LAYER_NAME = 'showPathLayer';
@@ -35,15 +35,7 @@ export function deleteSelected(obj) {
         }
         ajaxDeletePoints(euid, time1, time2).then(function(response) {
             console.log(response);
-            // clear the map
-            while ($.exposed['map'].getLayers().getLength() > 1) {
-                $.exposed['map'].getLayers().removeAt(1);
-            }
-            $.exposed['clickSelect'].getFeatures().clear();
-            $.exposed['hoverSelect'].getFeatures().clear();
-            // re-load the map points
-            downloadAndAddDataPoints($.exposed['map'], false);
-            initializeShowPathLayer($.exposed['map']);
+            refreshMap();
         });
     }
 };
@@ -169,7 +161,7 @@ function updateShownPathLayer(map, feature1, feature2) {
  * and return that layer.
  * @param {Map} map 
  */
-function initializeShowPathLayer(map) {
+export function initializeShowPathLayer(map) {
     var shownPathLayer = new VectorLayer({
         style: new Style({
             stroke: new Stroke({

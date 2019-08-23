@@ -25,8 +25,9 @@ export function getPoints() {
  */
 export function getPointsRange(time1, time2) {
   return new Promise(function(resolve, reject) {
-    ajaxGetDateTimeRange(time1, time2).then(function(reponse) {
-      resolve(parseResponse(response));
+    ajaxGetDateTimeRange(time1, time2).then(function(response) {
+      var rowsout = parseResponse(response);
+      resolve(rowsout);
     });
   });
 }
@@ -64,7 +65,6 @@ export function ajaxGetDateTimeRange(time1, time2) {
     $.post(
       GET_RANGE_DATA_URL,
       {
-        dot_euid: dotEuid,
         time1: toSqlDateString(time1),
         time2: toSqlDateString(time2)
       },
