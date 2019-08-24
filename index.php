@@ -1,3 +1,8 @@
+<?php
+    require_once "uq/auth.php";
+    auth_require();
+?>
+
 <!DOCTYPE html>
 <html>
   <head>

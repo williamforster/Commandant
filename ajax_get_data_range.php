@@ -1,4 +1,7 @@
 <?php
+    require_once "uq/auth.php";
+    auth_require();
+
     include 'db_connect.php';
     include_once 'constants.php';
     
