@@ -17,7 +17,8 @@
   </head>
   <body>
     <div id="topbar">
-      <a href="#"><img src="img/user-icon.png" alt="logout icon"/>logout</a>
+      <a id="logout-button" href="https://api.uqcloud.net/logout/">
+           <img src="img/user-icon.png" alt="logout icon"/>logout</a>
     </div><!--topbar-->
     <div id="map" class="map"></div>
     <div id="map-datapoint-popup">
