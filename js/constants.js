@@ -1,4 +1,4 @@
-export const COORDINATE_REFERENCE_SYSTEM = 'EPSG:4326';
+export const COORDINATE_REFERENCE_SYSTEM = "EPSG:4326";
 export const MAP_START_LOCATION = [153.01151, -27.49753];
 // What columns will be returned, in csv format, eg.
 // 00:80:00:00:de:ad:be:ef,2019-03-30 06:06:06,153.1111,-27.49555,0.1,-50
@@ -14,3 +14,5 @@ export const SNR_COL = 6;
 export const DEBRIS_DENSITY_COL = 7;
 export const PREVIOUS_COORDS = 8;
 export const NEXT_COORDS = 9;
+
+export const RANGE_SLIDER_ID = "#slider";

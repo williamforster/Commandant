@@ -18,7 +18,14 @@ import {
   addMostRecentToMap,
   sortDataIntoDays
 } from "./process_data";
-import { deleteSelected, initializeShowPathLayer, panToExtentOfData, panToLatestData, updateUi } from "./ui";
+import {
+  deleteSelected,
+  initializeShowPathLayer,
+  panToExtentOfData,
+  panToLatestData,
+  updateUi,
+  checkExtendRangeSlider
+} from "./ui";
 import * as constants from "./constants";
 
 const LOWER_BOUND_DAYS_AGO = 7; // The date slider lower bound
@@ -53,23 +60,24 @@ export function downloadAndAddDataPoints(map, time1, time2, pan = true) {
 export function refreshMap() {
   return new Promise(function(resolve, reject) {
     // clear the map
-    while ($.exposed['map'].getLayers().getLength() > 1) {
-        $.exposed['map'].getLayers().removeAt(1);
+    while ($.exposed["map"].getLayers().getLength() > 1) {
+      $.exposed["map"].getLayers().removeAt(1);
     }
-    $.exposed['clickSelect'].getFeatures().clear();
-    $.exposed['hoverSelect'].getFeatures().clear();
-    var sliderRange = $("#slider").dateRangeSlider('values');
+    $.exposed["clickSelect"].getFeatures().clear();
+    $.exposed["hoverSelect"].getFeatures().clear();
+    var sliderRange = $(constants.RANGE_SLIDER_ID).dateRangeSlider("values");
     console.log(sliderRange);
     // re-load the map points
-    downloadAndAddDataPoints($.exposed['map'],
-        sliderRange['min'],
-        sliderRange['max'],
-        false).then(function(rows) {
-          initializeShowPathLayer(map);
-          resolve(rows);
-        });
+    downloadAndAddDataPoints(
+      $.exposed["map"],
+      sliderRange["min"],
+      sliderRange["max"],
+      false
+    ).then(function(rows) {
+      initializeShowPathLayer(map);
+      resolve(rows);
+    });
   });
-  
 }
 
 // Use the OpenStreetMap database
@@ -169,7 +177,7 @@ $(document).ready(function() {
   thisMorning.setHours(4);
   var lowerBound = new Date();
   lowerBound.setDate(lowerBound.getDate() - LOWER_BOUND_DAYS_AGO);
-  $("#slider").dateRangeSlider({
+  $(constants.RANGE_SLIDER_ID).dateRangeSlider({
     defaultValues: {
       min: thisMorning,
       max: new Date()
@@ -188,10 +196,12 @@ $(document).ready(function() {
       return d + "-" + mo + "-" + y + " " + h + ":" + mi;
     }
   });
-  $("#slider").bind("userValuesChanged", function(e, data) {
+  $(constants.RANGE_SLIDER_ID).bind("userValuesChanged", function(e, data) {
     refreshMap().then(function(rows) {
       panToLatestData(map, rows);
     });
+    // Change the bounds if the user picked minimum
+    checkExtendRangeSlider();
   });
 
   downloadAndAddDataPoints(map, thisMorning, new Date());
