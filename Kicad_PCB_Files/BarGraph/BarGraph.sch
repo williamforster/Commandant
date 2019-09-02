@@ -235,8 +235,6 @@ F 3 "~" H 4000 3450 50  0001 C CNN
 	1    3800 3450
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	2900 4050 3900 4050
 Connection ~ 3900 4450
 Wire Wire Line
 	3900 4450 3900 4050
@@ -305,7 +303,6 @@ Wire Wire Line
 	4550 4050 3900 4050
 Wire Wire Line
 	4550 4250 5950 4250
-Connection ~ 3900 4050
 Wire Wire Line
 	4000 3900 4750 3900
 Wire Wire Line
@@ -382,7 +379,7 @@ U 1 1 5D46FB90
 P 3950 2450
 F 0 "H1" H 4050 2496 50  0000 L CNN
 F 1 "MountingHole" H 4050 2405 50  0000 L CNN
-F 2 "MountingHole:MountingHole_4mm_Pad" H 3950 2450 50  0001 C CNN
+F 2 "MountingHole:MountingHole_4mm" H 3950 2450 50  0001 C CNN
 F 3 "~" H 3950 2450 50  0001 C CNN
 	1    3950 2450
 	1    0    0    -1  
@@ -393,7 +390,7 @@ U 1 1 5D4716A5
 P 4200 2450
 F 0 "H3" H 4300 2496 50  0000 L CNN
 F 1 "MountingHole" H 4300 2405 50  0000 L CNN
-F 2 "MountingHole:MountingHole_4mm_Pad" H 4200 2450 50  0001 C CNN
+F 2 "MountingHole:MountingHole_4mm" H 4200 2450 50  0001 C CNN
 F 3 "~" H 4200 2450 50  0001 C CNN
 	1    4200 2450
 	1    0    0    -1  
@@ -404,7 +401,7 @@ U 1 1 5D4718D9
 P 3950 2700
 F 0 "H2" H 4050 2746 50  0000 L CNN
 F 1 "MountingHole" H 4050 2655 50  0000 L CNN
-F 2 "MountingHole:MountingHole_4mm_Pad" H 3950 2700 50  0001 C CNN
+F 2 "MountingHole:MountingHole_4mm" H 3950 2700 50  0001 C CNN
 F 3 "~" H 3950 2700 50  0001 C CNN
 	1    3950 2700
 	1    0    0    -1  
@@ -415,9 +412,25 @@ U 1 1 5D471C37
 P 4200 2700
 F 0 "H4" H 4300 2746 50  0000 L CNN
 F 1 "MountingHole" H 4300 2655 50  0000 L CNN
-F 2 "MountingHole:MountingHole_4mm_Pad" H 4200 2700 50  0001 C CNN
+F 2 "MountingHole:MountingHole_4mm" H 4200 2700 50  0001 C CNN
 F 3 "~" H 4200 2700 50  0001 C CNN
 	1    4200 2700
 	1    0    0    -1  
 $EndComp
+$Comp
+L Device:R R5
+U 1 1 5D623D89
+P 3150 4050
+F 0 "R5" V 2943 4050 50  0000 C CNN
+F 1 "10k" V 3034 4050 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 3080 4050 50  0001 C CNN
+F 3 "~" H 3150 4050 50  0001 C CNN
+	1    3150 4050
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2900 4050 3000 4050
+Wire Wire Line
+	3300 4050 3900 4050
+Connection ~ 3900 4050
 $EndSCHEMATC
