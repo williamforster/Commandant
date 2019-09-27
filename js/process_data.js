@@ -1,12 +1,12 @@
-import Feature from 'ol/Feature.js';
-import Point from 'ol/geom/Point.js';
-import {  Vector as VectorLayer } from 'ol/layer.js';
-import {  Vector as VectorSource } from 'ol/source.js';
-import { Circle as CircleStyle, Fill, Icon, Stroke, Style } from 'ol/style.js';
-import GeoJSON from 'ol/format/GeoJSON.js';
-import { isArray } from 'util';
-import * as constants from './constants';
-var colorConvert = require('color-convert');
+import Feature from "ol/Feature.js";
+import Point from "ol/geom/Point.js";
+import { Vector as VectorLayer } from "ol/layer.js";
+import { Vector as VectorSource } from "ol/source.js";
+import { Circle as CircleStyle, Fill, Icon, Stroke, Style } from "ol/style.js";
+import GeoJSON from "ol/format/GeoJSON.js";
+import { isArray } from "util";
+import * as constants from "./constants";
+var colorConvert = require("color-convert");
 
 // Dot and line HSV
 const LINE_SATURATION = 55;
@@ -16,7 +16,7 @@ const MAX_HUE = 360;
 const HUE_STEP = 212; // Increase hue by this for each new journey
 const HUE_START = 270;
 const DOT_SIZE = 4; // px radius
-const DOT_OUTLINE_COLOR = 'rgba(0,0,0,0.4)';
+const DOT_OUTLINE_COLOR = "rgba(0,0,0,0.4)";
 const DOT_OUTLINE_WIDTH = 2;
 const STROKE_WIDTH = 8;
 const MARKER_ICON_PATH = "./img/icon-marker.png";
@@ -27,36 +27,46 @@ const MARKER_ICON_PATH = "./img/icon-marker.png";
  * @param {2d array} rows : An array of db rows like in the example at top of this file.
  */
 export function addColumnsToData(rows) {
-    // sort by time and add the additional columns
-    rows.sort(function(a, b) { 
-        return sortDatetime(a[constants.DATETIME_COL], b[constants.DATETIME_COL]);
-    });
-    // TODO: remove outliers - fit to a linear regression
-    if (rows === undefined || !isArray(rows) || rows.length === 0) { return rows; }
-    rows[0][constants.DEBRIS_DENSITY_COL] = 0;
-    rows[0][constants.PREVIOUS_COORDS] = 
-            [rows[0][constants.LONGTITUDE_COL], rows[0][constants.LATITUDE_COL]];
-    for (var i = 1; i < rows.length; ++i) {
-        var xDistance = 
-                rows[i][constants.LONGTITUDE_COL] - rows[i-1][constants.LONGTITUDE_COL];
-        var yDistance = 
-                rows[i][constants.LATITUDE_COL] - rows[i-1][constants.LATITUDE_COL];
-        var distance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
-        rows[i][constants.DEBRIS_DENSITY_COL] = 
-                (rows[i][constants.FILL_COL] - rows[i - 1][constants.FILL_COL]) / distance;
-        rows[i][constants.PREVIOUS_COORDS] = 
-                [rows[i-1][constants.LONGTITUDE_COL], rows[i-1][constants.LATITUDE_COL]];
-    }
-
-    // add a next coords column
-    for (var i = 0; i < rows.length - 1; ++i) {
-        rows[i][constants.NEXT_COORDS] = 
-                [rows[i+1][constants.LONGTITUDE_COL], rows[i+1][constants.LATITUDE_COL]];
-    }
-    rows[rows.length-1][constants.NEXT_COORDS] = [
-        rows[rows.length-1][constants.LONGTITUDE_COL], 
-        rows[rows.length-1][constants.LATITUDE_COL]];
+  // sort by time and add the additional columns
+  rows.sort(function (a, b) {
+    return sortDatetime(b[constants.DATETIME_COL], a[constants.DATETIME_COL]);
+  });
+  // TODO: remove outliers - fit to a linear regression
+  if (rows === undefined || !isArray(rows) || rows.length === 0) {
     return rows;
+  }
+  rows[0][constants.DEBRIS_DENSITY_COL] = 0;
+  rows[0][constants.PREVIOUS_COORDS] = [
+    rows[0][constants.LONGTITUDE_COL],
+    rows[0][constants.LATITUDE_COL]
+  ];
+  for (var i = 1; i < rows.length; ++i) {
+    var xDistance =
+      rows[i][constants.LONGTITUDE_COL] - rows[i - 1][constants.LONGTITUDE_COL];
+    var yDistance =
+      rows[i][constants.LATITUDE_COL] - rows[i - 1][constants.LATITUDE_COL];
+    var distance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
+    rows[i][constants.DEBRIS_DENSITY_COL] =
+      (rows[i][constants.FILL_COL] - rows[i - 1][constants.FILL_COL]) /
+      distance;
+    rows[i][constants.PREVIOUS_COORDS] = [
+      rows[i - 1][constants.LONGTITUDE_COL],
+      rows[i - 1][constants.LATITUDE_COL]
+    ];
+  }
+
+  // add a next coords column
+  for (var i = 0; i < rows.length - 1; ++i) {
+    rows[i][constants.NEXT_COORDS] = [
+      rows[i + 1][constants.LONGTITUDE_COL],
+      rows[i + 1][constants.LATITUDE_COL]
+    ];
+  }
+  rows[rows.length - 1][constants.NEXT_COORDS] = [
+    rows[rows.length - 1][constants.LONGTITUDE_COL],
+    rows[rows.length - 1][constants.LATITUDE_COL]
+  ];
+  return rows;
 }
 
 /**
@@ -65,36 +75,38 @@ export function addColumnsToData(rows) {
  * @param {2d array} rows : All the data
  */
 export function sortDataIntoDays(rows) {
-    // Sort by euid then by date
-    rows.sort(function(a, b) { 
-        if (a[constants.EUID_COL] === b[constants.EUID_COL]) { 
-            return sortDatetime(a[constants.DATETIME_COL] > b[constants.DATETIME_COL]);
-        }
-        return a[constants.EUID_COL] > b[constants.EUID_COL];
-    });
-    if (rows.length > 0) {
-        var ret = [];
-        var lastDate = rows[0][constants.DATETIME_COL];
-        var lastEuid = rows[0][constants.EUID_COL];
-        var day = []; // Array of this day's rows
-        for (var row of rows) {
-            var currentDate = row[constants.DATETIME_COL];
-            if (row[constants.EUID_COL] === lastEuid &&
-                    currentDate.getFullYear() == lastDate.getFullYear() &&
-                    currentDate.getMonth() == lastDate.getMonth() &&
-                    currentDate.getDate() == lastDate.getDate()) {
-                day.push(row);
-            } else {
-                ret.push(day);
-                day = [row];
-            }
-            lastDate = currentDate;
-            lastEuid = row[constants.EUID_COL];
-        }
-        ret.push(day);
-        return ret;
+  // Sort by euid then by date
+  rows.sort(function (a, b) {
+    if (a[constants.EUID_COL] === b[constants.EUID_COL]) {
+      return sortDatetime(b[constants.DATETIME_COL], a[constants.DATETIME_COL]);
     }
-    return [rows];
+    return a[constants.EUID_COL] > b[constants.EUID_COL] ? 1 : -1;
+  });
+  if (rows.length > 0) {
+    var ret = [];
+    var lastDate = rows[0][constants.DATETIME_COL];
+    var lastEuid = rows[0][constants.EUID_COL];
+    var day = []; // Array of this day's rows
+    for (var row of rows) {
+      var currentDate = row[constants.DATETIME_COL];
+      if (
+        row[constants.EUID_COL] === lastEuid &&
+        currentDate.getFullYear() == lastDate.getFullYear() &&
+        currentDate.getMonth() == lastDate.getMonth() &&
+        currentDate.getDate() == lastDate.getDate()
+      ) {
+        day.push(row);
+      } else {
+        ret.push(day);
+        day = [row];
+      }
+      lastDate = currentDate;
+      lastEuid = row[constants.EUID_COL];
+    }
+    ret.push(day);
+    return ret;
+  }
+  return [rows];
 }
 
 /**
@@ -102,19 +114,19 @@ export function sortDataIntoDays(rows) {
  * @param {2d array} rows : the data in an array
  */
 export function getExtent(rows) {
-    var extent = [Infinity, Infinity, -Infinity, -Infinity];
-    if (rows.length > 0) {
-        for (var row of rows) {
-            if (row.length > constants.LATITUDE_COL - 1) {
-                extent[0] = Math.min(extent[0], row[constants.LONGTITUDE_COL]);
-                extent[1] = Math.min(extent[1], row[constants.LATITUDE_COL]);
-                extent[2] = Math.max(extent[2], row[constants.LONGTITUDE_COL]);
-                extent[3] = Math.max(extent[3], row[constants.LATITUDE_COL]);
-            }
-        }
-        return extent;
+  var extent = [Infinity, Infinity, -Infinity, -Infinity];
+  if (rows.length > 0) {
+    for (var row of rows) {
+      if (row.length > constants.LATITUDE_COL - 1) {
+        extent[0] = Math.min(extent[0], row[constants.LONGTITUDE_COL]);
+        extent[1] = Math.min(extent[1], row[constants.LATITUDE_COL]);
+        extent[2] = Math.max(extent[2], row[constants.LONGTITUDE_COL]);
+        extent[3] = Math.max(extent[3], row[constants.LATITUDE_COL]);
+      }
     }
-    return [0, 0, 10, 10];
+    return extent;
+  }
+  return [0, 0, 10, 10];
 }
 /**
  * Now the data is sorted into different color data points, add them to the map. Return
@@ -123,48 +135,61 @@ export function getExtent(rows) {
  * @param {array} buckets : Array of arrays of row. Row is an array like [euid, time, lon ...]
  */
 export function addJourneysToMap(map, buckets) {
-    var ret = [];
-    // Add lines to map
-    for (var i = 0; i < buckets.length; ++i) {
-        if (buckets[i].length === 0) { continue; }
-        // Make a geoJSON object
-        var geojsonObject = {
-            type:'FeatureCollection',
-            features: []
-        }
-        geojsonObject['features'].push(getGeoJSONLineString(buckets[i]));
-        var c = colorConvert.hsv.rgb((HUE_START + i * HUE_STEP) % MAX_HUE, LINE_SATURATION, LINE_VALUE);
-        addGeojsonToMap(map, geojsonObject, 'rgba(' + c[0] + ',' + c[1] + 
-                ',' + c[2] + ',' + ALPHA + ')', false   );
-        ret.push(geojsonObject);
-
-        // Add dots to map
-        if (buckets[i].length === 0) { continue; }
-        // Make a geoJSON object
-        var geojsonObject = {
-            type:'FeatureCollection',
-            features: []
-        };
-        for (var item of buckets[i]) {
-            geojsonObject['features'].push(getGeoJSONPoint(item));
-        }
-        addGeojsonToMap(map, geojsonObject, 'rgba(0,0,0,1)');
-        ret.push(geojsonObject);
-
-        
+  var ret = [];
+  // Add lines to map
+  for (var i = 0; i < buckets.length; ++i) {
+    if (buckets[i].length === 0) {
+      continue;
     }
-    return ret;
+    // Make a geoJSON object
+    var geojsonObject = {
+      type: "FeatureCollection",
+      features: []
+    };
+    geojsonObject["features"].push(getGeoJSONLineString(buckets[i]));
+    var c = colorConvert.hsv.rgb(
+      (HUE_START + i * HUE_STEP) % MAX_HUE,
+      LINE_SATURATION,
+      LINE_VALUE
+    );
+    addGeojsonToMap(
+      map,
+      geojsonObject,
+      "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + ALPHA + ")",
+      false
+    );
+    ret.push(geojsonObject);
+
+    // Add dots to map
+    if (buckets[i].length === 0) {
+      continue;
+    }
+    // Make a geoJSON object
+    var geojsonObject = {
+      type: "FeatureCollection",
+      features: []
+    };
+    for (var item of buckets[i]) {
+      geojsonObject["features"].push(getGeoJSONPoint(item));
+    }
+    addGeojsonToMap(map, geojsonObject, "rgba(0,0,0,1)");
+    ret.push(geojsonObject);
+  }
+  return ret;
 }
 
 /**
  * Function for sorting javascript date objects (ascending)
- * @param {Date} a 
- * @param {Date} b 
+ * @param {Date} a
+ * @param {Date} b
  */
 export function sortDatetime(a, b) {
-    if (b > a) { return 1; }
-    else if (a > b) { return -1; }
-    return 0;
+  if (b > a) {
+    return 1;
+  } else if (a > b) {
+    return -1;
+  }
+  return 0;
 }
 
 /**
@@ -175,40 +200,40 @@ export function sortDatetime(a, b) {
  * @param {boolean} selectable : Whether the layer should be selectable
  */
 function addGeojsonToMap(map, geojsonObject, color, selectable = true) {
-    var vectorSource = new VectorSource({
-        features: (new GeoJSON({
-            'dataProjection': constants.COORDINATE_REFERENCE_SYSTEM,
-            'featureProjection': constants.COORDINATE_REFERENCE_SYSTEM}))
-            .readFeatures(geojsonObject)
-    });
+  var vectorSource = new VectorSource({
+    features: new GeoJSON({
+      dataProjection: constants.COORDINATE_REFERENCE_SYSTEM,
+      featureProjection: constants.COORDINATE_REFERENCE_SYSTEM
+    }).readFeatures(geojsonObject)
+  });
 
-    var vectorLayer = new VectorLayer({
-        source: vectorSource,
-        updateWhileAnimating: true,
-        updateWhileInteracting: true,
-        selectable: selectable,
-        style: new Style({
-            fill: new Fill({
-              color: color
-            }),
-            stroke: new Stroke({
-              color: color,
-              width: STROKE_WIDTH
-            }),
-            image: new CircleStyle({
-              radius: DOT_SIZE,
-              fill: new Fill({
-                color: 'white'
-              }),
-              stroke: new Stroke({
-                  color: DOT_OUTLINE_COLOR,
-                  width: DOT_OUTLINE_WIDTH
-              })
-            })
+  var vectorLayer = new VectorLayer({
+    source: vectorSource,
+    updateWhileAnimating: true,
+    updateWhileInteracting: true,
+    selectable: selectable,
+    style: new Style({
+      fill: new Fill({
+        color: color
+      }),
+      stroke: new Stroke({
+        color: color,
+        width: STROKE_WIDTH
+      }),
+      image: new CircleStyle({
+        radius: DOT_SIZE,
+        fill: new Fill({
+          color: "white"
         }),
-        name: 'tracking' // show/hide layers identifier
-    });
-    map.addLayer(vectorLayer);
+        stroke: new Stroke({
+          color: DOT_OUTLINE_COLOR,
+          width: DOT_OUTLINE_WIDTH
+        })
+      })
+    }),
+    name: "tracking" // show/hide layers identifier
+  });
+  map.addLayer(vectorLayer);
 }
 
 /** Add an icon for most recent location to the map
@@ -216,41 +241,54 @@ function addGeojsonToMap(map, geojsonObject, color, selectable = true) {
  * @param {array[array]} rows rows of data as laid out in constants.js
  */
 export function addMostRecentToMap(map, rows) {
-    if (rows.length == 0) { return; }
-    // Sort by euid then date
-    rows.sort(function(a, b) { 
-        if (a[constants.EUID_COL] === b[constants.EUID_COL]) { 
-            return sortDatetime(a[constants.DATETIME_COL] < b[constants.DATETIME_COL]);
-        }
-        return a[constants.EUID_COL] > b[constants.EUID_COL];
-    });
-    var lastEuid = undefined;
-    for (var row of rows) {
-        if (row[constants.EUID_COL] === lastEuid) { continue; }
-        else {
-            lastEuid = row[constants.EUID_COL];
-            // add last position marker to map
-            var iconFeature = new Feature({
-                geometry: new Point([row[constants.LONGTITUDE_COL], row[constants.LATITUDE_COL]])
-            });
-            console.log(iconFeature);
-            var iconStyle = new Style({
-                image: new Icon(/** @type {module:ol/style/Icon~Options} */ ({
-                anchor: [0.5, 1.05],
-                anchorXUnits: 'fraction',
-                anchorYUnits: 'fraction',
-                src: MARKER_ICON_PATH
-                }))
-            });
-            iconFeature.setStyle(iconStyle);
-            map.addLayer(new VectorLayer({
-                source: new VectorSource({
-                    features: [iconFeature]
-                }),
-                name: 'tracking'
-            }));
-        }
+  if (rows.length == 0) {
+    return;
+  }
+  // Sort by euid then date
+  rows.sort(function (a, b) {
+    if (a[constants.EUID_COL] === b[constants.EUID_COL]) {
+      return sortDatetime(
+        a[constants.DATETIME_COL],
+        b[constants.DATETIME_COL]
+      );
     }
+    return a[constants.EUID_COL] > b[constants.EUID_COL];
+  });
+  var lastEuid = undefined;
+  for (var row of rows) {
+    if (row[constants.EUID_COL] === lastEuid) {
+      continue;
+    } else {
+      lastEuid = row[constants.EUID_COL];
+      // add last position marker to map
+      var iconFeature = new Feature({
+        geometry: new Point([
+          row[constants.LONGTITUDE_COL],
+          row[constants.LATITUDE_COL]
+        ])
+      });
+      console.log(iconFeature);
+      var iconStyle = new Style({
+        image: new Icon(
+          /** @type {module:ol/style/Icon~Options} */({
+            anchor: [0.5, 1.05],
+            anchorXUnits: "fraction",
+            anchorYUnits: "fraction",
+            src: MARKER_ICON_PATH
+          })
+        )
+      });
+      iconFeature.setStyle(iconStyle);
+      map.addLayer(
+        new VectorLayer({
+          source: new VectorSource({
+            features: [iconFeature]
+          }),
+          name: "tracking"
+        })
+      );
+    }
+  }
 }
 
 /**
@@ -258,28 +296,31 @@ export function addMostRecentToMap(map, rows) {
  * @param {array} row An array with information as laid out in the constants in constants.js
  */
 function getGeoJSONPoint(row) {
-    if (row && isArray(row) && row.length > constants.NEXT_COORDS)  {
-        return {
-            type: 'Feature',
-            geometry: {
-                type: 'Point',
-                coordinates: [row[constants.LONGTITUDE_COL], row[constants.LATITUDE_COL]]
-            },
-            "properties": {
-                type: 'Point',
-                euid: row[constants.EUID_COL],
-                time: row[constants.DATETIME_COL],
-                fill: row[constants.FILL_COL],
-                rssi: row[constants.SIGNAL_COL],
-                snr: row[constants.SNR_COL],
-                debrisDensity: row[constants.DEBRIS_DENSITY_COL]
-            }
-        };
-    } else {
-        console.log('Bad row passed to getGeoJSONPoint:');
-        console.log(row);
-        return;
-    }
+  if (row && isArray(row) && row.length > constants.NEXT_COORDS) {
+    return {
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [
+          row[constants.LONGTITUDE_COL],
+          row[constants.LATITUDE_COL]
+        ]
+      },
+      properties: {
+        type: "Point",
+        euid: row[constants.EUID_COL],
+        time: row[constants.DATETIME_COL],
+        fill: row[constants.FILL_COL],
+        rssi: row[constants.SIGNAL_COL],
+        snr: row[constants.SNR_COL],
+        debrisDensity: row[constants.DEBRIS_DENSITY_COL]
+      }
+    };
+  } else {
+    console.log("Bad row passed to getGeoJSONPoint:");
+    console.log(row);
+    return;
+  }
 }
 
 /**
@@ -287,22 +328,29 @@ function getGeoJSONPoint(row) {
  * @param {array} rows : array of data rows like [euid, time, lon ...]
  */
 function getGeoJSONLineString(rows) {
-    if (rows && isArray(rows) && rows.length > 0 && rows[0].length > constants.NEXT_COORDS)  {
-        var ret = {
-            type: 'Feature',
-            geometry: {
-                type: 'LineString',
-                coordinates: []
-            }
-        }
-        for (var row of rows) {
-            ret['geometry']['coordinates'].push(
-                    [row[constants.LONGTITUDE_COL], row[constants.LATITUDE_COL]]);
-        }
-        return ret;
-    } else {
-        console.log('Bad row passed to getGeoJSONMultiLineString:');
-        console.log(row);
-        return;
+  if (
+    rows &&
+    isArray(rows) &&
+    rows.length > 0 &&
+    rows[0].length > constants.NEXT_COORDS
+  ) {
+    var ret = {
+      type: "Feature",
+      geometry: {
+        type: "LineString",
+        coordinates: []
+      }
+    };
+    for (var row of rows) {
+      ret["geometry"]["coordinates"].push([
+        row[constants.LONGTITUDE_COL],
+        row[constants.LATITUDE_COL]
+      ]);
     }
+    return ret;
+  } else {
+    console.log("Bad row passed to getGeoJSONMultiLineString:");
+    console.log(row);
+    return;
+  }
 }

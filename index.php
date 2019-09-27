@@ -24,7 +24,9 @@
     <div id="map-datapoint-popup">
       <div id="map-datapoint-popup-content"></div>
     </div>
-    <div id="slider"></div>
+    <div id="date-slider"></div>
+    <div id="hdop-slider"></div>
+    <div id="hdop-display">HDOP=1.15</div>
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>

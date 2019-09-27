@@ -1,12 +1,12 @@
 <?php
-    // Message format: "sc/g/0190420060606153.012345,-27.012345,8.5,0.32,-101,-27\n"
+    // Message format: "sc/g/0190420060606153.012345,-27.012345,8.5,0.32,-101,-27,4,1.015\n"
     // smartcampus/glutton/sequence_no  yymmddhhMMss  longtitude,latitude,
-    // altitude(m above sea),fill%,signal str, signal noise ratio  \n
+    // altitude(m above sea),fill%,signal str, signal noise ratio , satellites, hdop \n
     //
     // Sequence number is a char starting at '0' specifying the order of the packets
     // A typical reading might be transmitted in 2 packets
     // "sc/g/0190420060606153.012345,-27"
-    // "sc/g/1.012345,8.5,0.32,-101,-40\n"
+    // "sc/g/1.012345,8.5,0.32,-101,-40,4,1.1\n"
     //       ^sequence number
     // Packets will be transmitted in order, but if an ACK is not received, will be sent again.
     // Datetime is UTC and the database stores it that way.
@@ -14,9 +14,9 @@
     if (!defined("G_TERMINATOR")) { define("G_TERMINATOR", "\n"); }
     if (!defined("G_SEPARATOR")) { define("G_SEPARATOR", ","); }
     if (!defined("G_MIN_MESSAGE_LENGTH")) {
-        define("G_MIN_MESSAGE_LENGTH", strlen("1901010830040,0,5,0,0,0\n"));
+        define("G_MIN_MESSAGE_LENGTH", strlen("1901010830040,0,5,0,0,0,4,1\n"));
     }
-    if (!defined("G_MESSAGE_COMMA_COUNT")) { define("G_MESSAGE_COMMA_COUNT", 5); }
+    if (!defined("G_MESSAGE_COMMA_COUNT")) { define("G_MESSAGE_COMMA_COUNT", 7); }
     $sequence_ascii = ord(substr($value, 0, 1));
 
     // Parse and insert assembled data into database.
@@ -43,10 +43,11 @@
                 $hour, $minute, $second);
 
         // Parse the remaining values 
-        list($longtitude, $latitude, $altitude, $fill, $signal, $snr) = 
+        list($longtitude, $latitude, $altitude, $fill, $signal, $snr, $satellites, $hdop) = 
                 explode(G_SEPARATOR, substr($assembled, 12));
         if (!is_numeric($longtitude) || !is_numeric($latitude) || !is_numeric($altitude) ||
-                !is_numeric($fill) || !is_numeric($signal) || !is_numeric($snr)) {
+                !is_numeric($fill) || !is_numeric($signal) || !is_numeric($snr) || 
+                !is_numeric($satellites) || !is_numeric($hdop)) {
             write2log("Glutton: non-numeric value in message: " . $assembled);
             return;
         }
@@ -55,8 +56,8 @@
         try {
             $stmt = $_SESSION['DBlink']->prepare(
                     'INSERT INTO `glutton_reading` ' .
-                    '(`dot_euid`,`time`,`longtitude`,`latitude`,`altitude`,`fill`,`rssi`,`snr`) ' . 
-                    'VALUES (:eui, :dtime, :longtitude, :latitude, :altitude, :fill, :signal, :snr);');
+                    '(`dot_euid`,`time`,`longtitude`,`latitude`,`altitude`,`fill`,`rssi`,`snr`,`satellites`,`hdop`) ' . 
+                    'VALUES (:eui, :dtime, :longtitude, :latitude, :altitude, :fill, :signal, :snr, :satellites, :hdop);');
             $stmt->execute(array(':eui' => $eui,
                                 ':dtime' => $dtime,
                                 ':longtitude'  => $longtitude,
@@ -64,9 +65,11 @@
                                 ':altitude' => $altitude,
                                 ':fill' => $fill,
                                 ':signal' => $signal,
-                                ':snr' => $snr));
+                                ':snr' => $snr,
+                                ':satellites' => $satellites,
+                                ':hdop' => $hdop));
             
-            write2log('Glutton reading stored: ' . $dtime . ' ' . $longtitude . ' ' . $latitude);
+            //write2log('Glutton reading stored: ' . $dtime . ' ' . $longtitude . ' ' . $latitude);
         } catch (PDOException $e) {
             $e->getMessage();
             write2log("DB error - glutton:" . $e);
@@ -82,7 +85,7 @@
             $delete = $_SESSION['DBlink']->prepare('DELETE FROM `glutton_partial_message` ' . 
                     'WHERE `dot_euid`=:eui;');
             $delete->execute(array(':eui' => $eui));
-            write2log("Glutton: new series of packets begun. Db cleared.");
+            //write2log("Glutton: new series of packets begun. Db cleared.");
         } catch (PDOException $e) {
             $e->getMessage();
             write2log("DB error - glutton:" . $e);
@@ -97,7 +100,7 @@
         $insert->execute(array(':eui' => $eui,
                             ':sequence' => $sequence_ascii, 
                             ':message' => substr($value, 1)));
-        write2log('Glutton - inserted partial message to db');
+        //write2log('Glutton - inserted partial message to db');
 
         // If it contains \n, assemble the message
         if (strpos($value, G_TERMINATOR) != FALSE) {
