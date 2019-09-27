@@ -28,7 +28,7 @@ const MARKER_ICON_PATH = "./img/icon-marker.png";
  */
 export function addColumnsToData(rows) {
   // sort by time and add the additional columns
-  rows.sort(function(a, b) {
+  rows.sort(function (a, b) {
     return sortDatetime(b[constants.DATETIME_COL], a[constants.DATETIME_COL]);
   });
   // TODO: remove outliers - fit to a linear regression
@@ -76,7 +76,7 @@ export function addColumnsToData(rows) {
  */
 export function sortDataIntoDays(rows) {
   // Sort by euid then by date
-  rows.sort(function(a, b) {
+  rows.sort(function (a, b) {
     if (a[constants.EUID_COL] === b[constants.EUID_COL]) {
       return sortDatetime(b[constants.DATETIME_COL], a[constants.DATETIME_COL]);
     }
@@ -245,10 +245,11 @@ export function addMostRecentToMap(map, rows) {
     return;
   }
   // Sort by euid then date
-  rows.sort(function(a, b) {
+  rows.sort(function (a, b) {
     if (a[constants.EUID_COL] === b[constants.EUID_COL]) {
       return sortDatetime(
-        a[constants.DATETIME_COL] < b[constants.DATETIME_COL]
+        a[constants.DATETIME_COL],
+        b[constants.DATETIME_COL]
       );
     }
     return a[constants.EUID_COL] > b[constants.EUID_COL];
@@ -269,7 +270,7 @@ export function addMostRecentToMap(map, rows) {
       console.log(iconFeature);
       var iconStyle = new Style({
         image: new Icon(
-          /** @type {module:ol/style/Icon~Options} */ ({
+          /** @type {module:ol/style/Icon~Options} */({
             anchor: [0.5, 1.05],
             anchorXUnits: "fraction",
             anchorYUnits: "fraction",

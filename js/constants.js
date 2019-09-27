@@ -15,4 +15,5 @@ export const DEBRIS_DENSITY_COL = 7;
 export const PREVIOUS_COORDS = 8;
 export const NEXT_COORDS = 9;
 
-export const RANGE_SLIDER_ID = "#slider";
+export const RANGE_SLIDER_ID = "#date-slider";
+export const HDOP_SLIDER_ID = "#hdop-slider"

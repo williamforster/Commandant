@@ -24,9 +24,22 @@
 }
 
 /* Date range slider */
-#slider {
+#date-slider {
     position: absolute;
-    bottom: 0.5em;
+    bottom: 3em;
     width: 93%;
     margin-left: 16px;
+}
+
+#hdop-slider {
+    position: absolute;
+    bottom: 0.75em;
+    width: 30%;
+    margin-left: 16px;
+}
+
+#hdop-display {
+    position: absolute;
+    bottom: 0.5em;
+    left: 33%;
 }

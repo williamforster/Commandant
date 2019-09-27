@@ -9,8 +9,8 @@ const GET_RANGE_DATA_URL = "ajax_get_data_range.php";
  * with the rows as parameter.
  */
 export function getPoints() {
-  return new Promise(function(resolve, reject) {
-    get(LOCATION_DATA_URL).then(function(response) {
+  return new Promise(function (resolve, reject) {
+    get(LOCATION_DATA_URL).then(function (response) {
       var rowsout = parseResponse(response);
       resolve(rowsout);
     });
@@ -22,10 +22,11 @@ export function getPoints() {
  * with the rows as parameter.
  * @param {Date} time1 must be the earlier time
  * @param {Date} time2 must be the later time
+ * @param {float} hdop the max hdop to filter accuracy of the location
  */
-export function getPointsRange(time1, time2) {
-  return new Promise(function(resolve, reject) {
-    ajaxGetDateTimeRange(time1, time2).then(function(response) {
+export function getPointsRange(time1, time2, hdop = 1.15) {
+  return new Promise(function (resolve, reject) {
+    ajaxGetDateTimeRange(time1, time2, hdop).then(function (response) {
       var rowsout = parseResponse(response);
       resolve(rowsout);
     });
@@ -39,7 +40,7 @@ export function getPointsRange(time1, time2) {
  * @param {Date} time2 inclusive end point to delete
  */
 export function ajaxDeletePoints(dotEuid, time1, time2) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     $.post(
       DELETE_DATA_URL,
       {
@@ -47,7 +48,7 @@ export function ajaxDeletePoints(dotEuid, time1, time2) {
         time1: toSqlDateString(time1),
         time2: toSqlDateString(time2)
       },
-      function(response) {
+      function (response) {
         resolve(response);
       }
     );
@@ -59,16 +60,19 @@ export function ajaxDeletePoints(dotEuid, time1, time2) {
  * Does not check if times are reversed
  * @param {Date} time1 get data after this
  * @param {Date} time2 get data before this
+ * @param {float} hdop the max hdop to filter loc accuracy
  **/
-export function ajaxGetDateTimeRange(time1, time2) {
-  return new Promise(function(resolve, reject) {
+export function ajaxGetDateTimeRange(time1, time2, hdop) {
+  console.log("Getting data with hdop < ", hdop);
+  return new Promise(function (resolve, reject) {
     $.post(
       GET_RANGE_DATA_URL,
       {
         time1: toSqlDateString(time1),
-        time2: toSqlDateString(time2)
+        time2: toSqlDateString(time2),
+        hdop: hdop
       },
-      function(response) {
+      function (response) {
         resolve(response);
       }
     );
@@ -81,12 +85,12 @@ export function ajaxGetDateTimeRange(time1, time2) {
  */
 function get(url) {
   // Return a new promise.
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     // Do the usual XHR stuff
     var req = new XMLHttpRequest();
     req.open("GET", url);
 
-    req.onload = function() {
+    req.onload = function () {
       // This is called even on 404 etc
       // so check the status
       if (req.status == 200) {
@@ -100,7 +104,7 @@ function get(url) {
     };
 
     // Handle network errors
-    req.onerror = function() {
+    req.onerror = function () {
       reject(Error("Network Error"));
     };
 
@@ -117,7 +121,7 @@ function get(url) {
  */
 function sortDataIntoBuckets(rows, sortColumn, numBuckets) {
   // Now sort by debris density and divide into 'buckets'
-  rows.sort(function(a, b) {
+  rows.sort(function (a, b) {
     return b[sortColumn] - a[sortColumn];
   });
   // Create a dynamic array (empty)

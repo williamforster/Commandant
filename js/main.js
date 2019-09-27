@@ -37,9 +37,9 @@ const LOWER_BOUND_DAYS_AGO = 7; // The date slider lower bound
  * @param {Date} time2 the later time of range of data
  * @param {bool} pan whether to pan to the data
  */
-export function downloadAndAddDataPoints(map, time1, time2, pan = true) {
-  return new Promise(function(resolve, reject) {
-    getPointsRange(time1, time2).then(function(rows) {
+export function downloadAndAddDataPoints(map, time1, time2, hdop, pan = true) {
+  return new Promise(function (resolve, reject) {
+    getPointsRange(time1, time2, hdop).then(function (rows) {
       rows = addColumnsToData(rows);
       console.log(rows);
       if (pan) {
@@ -58,7 +58,7 @@ export function downloadAndAddDataPoints(map, time1, time2, pan = true) {
  * Clear the map and reload the points
  */
 export function refreshMap() {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     // clear the map
     while ($.exposed["map"].getLayers().getLength() > 1) {
       $.exposed["map"].getLayers().removeAt(1);
@@ -72,8 +72,9 @@ export function refreshMap() {
       $.exposed["map"],
       sliderRange["min"],
       sliderRange["max"],
+      $(constants.HDOP_SLIDER_ID).slider("option", "value"),
       false
-    ).then(function(rows) {
+    ).then(function (rows) {
       initializeShowPathLayer(map);
       resolve(rows);
     });
@@ -111,7 +112,7 @@ var clickSelect = new Select({
   hitTolerance: 2,
   // Do not select ui layers
   // selectable is not an official property so may not be in all layers
-  layers: function(layer) {
+  layers: function (layer) {
     return layer.getProperties()["selectable"] != false;
   }
 });
@@ -121,11 +122,11 @@ var hoverSelect = new Select({
   hitTolerance: 2,
   // Do not select ui layers
   // selectable is not an official property so may not be in all layers
-  layers: function(layer) {
+  layers: function (layer) {
     return layer.getProperties()["selectable"] != false;
   }
 });
-hoverSelect.on("select", function(evt) {});
+hoverSelect.on("select", function (evt) { });
 map.addInteraction(clickSelect);
 map.addInteraction(hoverSelect);
 
@@ -143,16 +144,16 @@ var contextmenu = new ContextMenu({
   ]
 });
 /** Only update selection when right click menu is not open */
-contextmenu.on("open", function(evt) {
+contextmenu.on("open", function (evt) {
   $.exposed["hoverSelect"].setActive(false);
 });
-contextmenu.on("close", function(evt) {
+contextmenu.on("close", function (evt) {
   $.exposed["hoverSelect"].setActive(true);
 });
 map.addControl(contextmenu);
 
 // Check if mouse is over a dot and show/hide popup depending
-map.on("pointermove", function(evt) {
+map.on("pointermove", function (evt) {
   if (evt.dragging) {
     return;
   }
@@ -166,11 +167,11 @@ map.on("pointermove", function(evt) {
 });
 
 // Run an ajax query to get the data points and add them to the map
-$(document).ready(function() {
+$(document).ready(function () {
   // Add hidden class to right click menu, so behaviour is correct
   $(".ol-ctx-menu-container").addClass("ol-ctx-menu-hidden");
 
-  // Add the jquery slider
+  // Add the jquery date slider
   var thisMorning = new Date();
   thisMorning.setSeconds(0);
   thisMorning.setMinutes(0);
@@ -187,7 +188,7 @@ $(document).ready(function() {
       max: new Date()
     },
     step: { minutes: 1 },
-    formatter: function(val) {
+    formatter: function (val) {
       var d = val.getDate();
       var mo = val.getMonth() + 1;
       var y = val.getFullYear();
@@ -196,15 +197,30 @@ $(document).ready(function() {
       return d + "-" + mo + "-" + y + " " + h + ":" + mi;
     }
   });
-  $(constants.RANGE_SLIDER_ID).bind("userValuesChanged", function(e, data) {
-    refreshMap().then(function(rows) {
+  $(constants.RANGE_SLIDER_ID).bind("userValuesChanged", function (e, data) {
+    refreshMap().then(function (rows) {
       panToLatestData(map, rows);
     });
     // Change the bounds if the user picked minimum
     checkExtendRangeSlider();
   });
 
-  downloadAndAddDataPoints(map, thisMorning, new Date());
+  // Add the hdop slider
+  $(constants.HDOP_SLIDER_ID).slider({
+    value: 1.15,
+    min: 1.0,
+    max: 2.0,
+    step: 0.01,
+    change: function (event, ui) {
+      $("#hdop-display").html("HDOP=" + ui.value);
+      refreshMap();
+    }
+  });
+
+  downloadAndAddDataPoints(map,
+    thisMorning,
+    new Date(),
+    $(constants.HDOP_SLIDER_ID).slider("option", "value"));
   AddCheckboxControls(map);
 });
 
