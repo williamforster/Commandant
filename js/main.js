@@ -29,6 +29,9 @@ import {
 import * as constants from "./constants";
 
 const LOWER_BOUND_DAYS_AGO = 7; // The date slider lower bound
+const HDOP_MIN = 1.0;
+const HDOP_MAX = 10.0;
+const HDOP_DEFAULT = 10.0;
 
 /**
  * Do the ajax query and put the data on the map
@@ -207,9 +210,9 @@ $(document).ready(function () {
 
   // Add the hdop slider
   $(constants.HDOP_SLIDER_ID).slider({
-    value: 1.15,
-    min: 1.0,
-    max: 2.0,
+    value: HDOP_DEFAULT,
+    min: HDOP_MIN,
+    max: HDOP_MAX,
     step: 0.01,
     change: function (event, ui) {
       $("#hdop-display").html("HDOP=" + ui.value);
