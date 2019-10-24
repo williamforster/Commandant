@@ -11,9 +11,6 @@
     <link rel="stylesheet" href="style/iThing-min.css">
   </head>
   <body>
-    <div id="topbar">
-      <a href="#"><img src="img/user-icon.png" alt="logout icon"/>logout</a>
-    </div><!--topbar-->
     <div id="map" class="map"></div>
     <div id="map-datapoint-popup">
       <div id="map-datapoint-popup-content"></div>
